@@ -21,3 +21,23 @@ func Test_NewEncoder(t *testing.T) {
 		t.Errorf("Expected error for illegal samplerate 12345")
 	}
 }
+
+func Test_NewDecoder(t *testing.T) {
+	dec, err := NewDecoder(48000, 1)
+	if err != nil || dec == nil {
+		t.Errorf("Error creating new decoder: %v", err)
+	}
+	dec, err = NewDecoder(12345, 1)
+	if err == nil || dec != nil {
+		t.Errorf("Expected error for illegal samplerate 12345")
+	}
+}
+
+func Test_loop(t *testing.T) {
+	// Create bogus input sound
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 10
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	pcm := make([]float32, FRAME_SIZE)
+	//you know what I'll finish this later
+}
