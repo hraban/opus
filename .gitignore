@@ -17,3 +17,5 @@ _testmain.go
 # Just noise
 *~
 *.orig
+
+libopus.a

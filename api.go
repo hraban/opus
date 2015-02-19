@@ -1,3 +1,5 @@
+// Copyright © 2015 Hraban Luyat <hraban@0brg.net>
+
 package opus
 
 import (
@@ -6,9 +8,17 @@ import (
 )
 
 /*
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic
-// Statically link libopus
-#cgo LDFLAGS: libopusbuild/lib/libopus.a -lm
+// Statically link libopus. Requires a libopus.a in every directory you use this
+// as a dependency in. Not great, but CGO doesn't offer anything better, right
+// now. Unless you require everyone who USES this package to instal have libopus
+// installed system-wide, which is more of a chore because it's so new. Everyone
+// will end up having to build it from source anyway, might as well just dump
+// the pre-built lib in here. At least it will be up to the package maintainer,
+// not the user.
+//
+// If I missed something, and somebody knows a better way: please let me know.
+#cgo LDFLAGS: libopus.a -lm
+#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ilibopusbuild/include
 #include <opus/opus.h>
 */
 import "C"

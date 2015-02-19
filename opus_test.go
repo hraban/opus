@@ -40,4 +40,5 @@ func Test_loop(t *testing.T) {
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
 	pcm := make([]float32, FRAME_SIZE)
 	//you know what I'll finish this later
+	_ = pcm
 }

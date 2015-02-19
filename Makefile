@@ -1,8 +1,5 @@
 BUILDDIR := libopusbuild
 
-export CGO_LDFLAGS := -L$(BUILDDIR)/lib
-export CGO_CFLAGS := -I$(BUILDDIR)/include
-
 .PHONY: libopus clean default test build
 
 default: libopus
@@ -24,7 +21,8 @@ libopus/autogen.sh:
 libopus: libopus/config.h
 	$(MAKE) -C libopus
 	$(MAKE) -C libopus install
+	cp $(BUILDDIR)/lib/libopus.a .
 
-clean:
-	$(MAKE) -C libopus clean
-	rm -rf $(BUILDDIR) libopus/configure.h
+%clean:
+	$(MAKE) -C libopus $@
+	rm -rf $(BUILDDIR) libopus/configure.h 
