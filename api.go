@@ -56,6 +56,9 @@ func NewEncoder(sample_rate int, channels int, application Application) (*Encode
 }
 
 func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
+	if pcm == nil || len(pcm) == 0 {
+		return nil, fmt.Errorf("opus: no data supplied")
+	}
 	// I never know how much to allocate
 	data := make([]byte, 10000)
 	n := int(C.opus_encode_float(
@@ -99,6 +102,9 @@ func NewDecoder(sample_rate int, channels int) (*Decoder, error) {
 }
 
 func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
+	if data == nil || len(data) == 0 {
+		return nil, fmt.Errorf("opus: no data supplied")
+	}
 	// I don't know how big this frame will be, but this is the limit
 	pcm := make([]float32, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
 	n := int(C.opus_decode_float(
