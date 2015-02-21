@@ -99,7 +99,6 @@ func NewDecoder(sample_rate int, channels int) (*Decoder, error) {
 }
 
 func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
-	var errno int
 	// I don't know how big this frame will be, but this is the limit
 	pcm := make([]float32, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
 	n := int(C.opus_decode_float(
@@ -110,7 +109,7 @@ func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
 		C.int(cap(pcm)),
 		0))
 	if n < 0 {
-		return nil, opuserr(errno)
+		return nil, opuserr(n)
 	}
 	return pcm[:n], nil
 }
