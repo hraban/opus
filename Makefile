@@ -5,7 +5,7 @@ BUILDDIR := libopusbuild
 default: libopus
 
 build:
-	go build -o opus
+	go build
 
 test:
 	go test
