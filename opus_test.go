@@ -1,3 +1,7 @@
+// Copyright © 2015 Hraban Luyat <hraban@0brg.net>
+//
+// License for use of this code is detailed in the LICENSE file
+
 package opus
 
 import (
