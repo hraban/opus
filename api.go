@@ -12,7 +12,7 @@ import (
 /*
 // Statically link libopus. Requires a libopus.a in every directory you use this
 // as a dependency in. Not great, but CGO doesn't offer anything better, right
-// now. Unless you require everyone who USES this package to instal have libopus
+// now. Unless you require everyone who USES this package to have libopus
 // installed system-wide, which is more of a chore because it's so new. Everyone
 // will end up having to build it from source anyway, might as well just dump
 // the pre-built lib in here. At least it will be up to the package maintainer,
@@ -27,14 +27,22 @@ import "C"
 
 type Application int
 
-// TODO: Get from lib because #defines can change
-const APPLICATION_VOIP Application = 2048
-const APPLICATION_AUDIO Application = 2049
-const APPLICATION_RESTRICTED_LOWDELAY Application = 2051
+// These constants should be taken from the library instead of defined here.
+// Unfortunatly, they are #defines, and CGO can't import those.
+const (
+	// Optimize encoding for VOIP
+	APPLICATION_VOIP Application = 2048
+	// Optimize encoding for non-voice signals like music
+	APPLICATION_AUDIO Application = 2049
+	// Optimize encoding for low latency applications
+	APPLICATION_RESTRICTED_LOWDELAY Application = 2051
+)
 
-const xMAX_BITRATE = 48000
-const xMAX_FRAME_SIZE_MS = 60
-const xMAX_FRAME_SIZE = xMAX_BITRATE * xMAX_FRAME_SIZE_MS / 1000
+const (
+	xMAX_BITRATE       = 48000
+	xMAX_FRAME_SIZE_MS = 60
+	xMAX_FRAME_SIZE    = xMAX_BITRATE * xMAX_FRAME_SIZE_MS / 1000
+)
 
 func Version() string {
 	return C.GoString(C.opus_get_version_string())
