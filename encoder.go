@@ -67,8 +67,7 @@ func (enc *Encoder) Encode(pcm []int16) ([]byte, error) {
 	if pcm == nil || len(pcm) == 0 {
 		return nil, fmt.Errorf("opus: no data supplied")
 	}
-	// I never know how much to allocate
-	data := make([]byte, 10000)
+	data := make([]byte, maxEncodedFrameSize)
 	n := int(C.opus_encode(
 		enc.p,
 		(*C.opus_int16)(&pcm[0]),
@@ -88,7 +87,7 @@ func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
 	if pcm == nil || len(pcm) == 0 {
 		return nil, fmt.Errorf("opus: no data supplied")
 	}
-	data := make([]byte, 10000)
+	data := make([]byte, maxEncodedFrameSize)
 	n := int(C.opus_encode_float(
 		enc.p,
 		(*C.float)(&pcm[0]),

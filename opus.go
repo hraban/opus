@@ -4,10 +4,6 @@
 
 package opus
 
-import (
-	"fmt"
-)
-
 /*
 // Statically link libopus. Requires a libopus.a in every directory you use this
 // as a dependency in. Not great, but CGO doesn't offer anything better, right
@@ -18,7 +14,7 @@ import (
 // not the user.
 //
 // If I missed something, and somebody knows a better way: please let me know.
-#cgo LDFLAGS: libopus.a -lm
+#cgo LDFLAGS: libopusfile.a libopus.a -logg -lm
 #cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
 #include <opus/opus.h>
 */
@@ -41,12 +37,11 @@ const (
 	xMAX_BITRATE       = 48000
 	xMAX_FRAME_SIZE_MS = 60
 	xMAX_FRAME_SIZE    = xMAX_BITRATE * xMAX_FRAME_SIZE_MS / 1000
+	// Maximum size of an encoded frame. I actually have no idea, but this
+	// looks like it's big enough.
+	maxEncodedFrameSize = 10000
 )
 
 func Version() string {
 	return C.GoString(C.opus_get_version_string())
-}
-
-func opuserr(code int) error {
-	return fmt.Errorf("opus: %s", C.GoString(C.opus_strerror(C.int(code))))
 }
