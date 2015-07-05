@@ -63,8 +63,9 @@ func (s *Stream) Init(read io.Reader) error {
 		return fmt.Errorf("opus stream is already initialized")
 	}
 	if read == nil {
-		return fmt.Errorf("Reader function must be non-nil")
+		return fmt.Errorf("Reader must be non-nil")
 	}
+	s.read = read
 	var errno C.int
 	oggfile := C.op_open_callbacks(
 		unsafe.Pointer(s),
@@ -80,20 +81,28 @@ func (s *Stream) Init(read io.Reader) error {
 	return nil
 }
 
-func (s *Stream) Read() ([]int16, error) {
+// Read a chunk of raw opus data from the stream and decode it. Returns the
+// number of decoded samples per channel. This means that a dual channel
+// (stereo) feed will have twice as many samples as the value returned.
+func (s *Stream) Read(pcm []int16) (int, error) {
 	if s.oggfile == nil {
-		return nil, fmt.Errorf("opus stream is uninitialized or already closed")
+		return 0, fmt.Errorf("opus stream is uninitialized or already closed")
 	}
-	pcm := make([]int16, xMAX_FRAME_SIZE)
+	if len(pcm) == 0 {
+		return 0, nil
+	}
 	n := C.op_read(
 		s.oggfile,
 		(*C.opus_int16)(&pcm[0]),
-		C.int(cap(pcm)),
+		C.int(len(pcm)),
 		nil)
 	if n < 0 {
-		return nil, opusfileerr(n)
+		return 0, opusfileerr(n)
 	}
-	return pcm[:n], nil
+	if n == 0 {
+		return 0, io.EOF
+	}
+	return int(n), nil
 }
 
 func (s *Stream) Close() error {
