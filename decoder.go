@@ -16,21 +16,30 @@ import (
 import "C"
 
 type Decoder struct {
-	p           *C.struct_OpusDecoder
+	p *C.struct_OpusDecoder
+	// Same purpose as encoder struct
+	mem         []byte
 	sample_rate int
 }
 
+// NewEncoder allocates a new Opus decoder and initializes it with the
+// appropriate parameters. All related memory is managed by the Go GC.
 func NewDecoder(sample_rate int, channels int) (*Decoder, error) {
-	var errno int
-	p := C.opus_decoder_create(C.opus_int32(sample_rate), C.int(channels), (*C.int)(unsafe.Pointer(&errno)))
+	if channels != 1 && channels != 2 {
+		return nil, fmt.Errorf("Number of channels must be 1 or 2: %d", channels)
+	}
+	dec := Decoder{sample_rate: sample_rate}
+	size := C.opus_decoder_get_size(C.int(channels))
+	dec.mem = make([]byte, size)
+	dec.p = (*C.OpusDecoder)(unsafe.Pointer(&dec.mem[0]))
+	errno := C.opus_decoder_init(
+		dec.p,
+		C.opus_int32(sample_rate),
+		C.int(channels))
 	if errno != 0 {
-		return nil, opuserr(errno)
+		return nil, opuserr(int(errno))
 	}
-	dec := &Decoder{
-		p:           p,
-		sample_rate: sample_rate,
-	}
-	return dec, nil
+	return &dec, nil
 }
 
 func (dec *Decoder) Decode(data []byte) ([]int16, error) {
@@ -68,14 +77,4 @@ func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
 		return nil, opuserr(n)
 	}
 	return pcm[:n], nil
-}
-
-// Returns an error if the encoder was already closed
-func (dec *Decoder) Close() error {
-	if dec.p == nil {
-		return fmt.Errorf("opus: decoder already closed")
-	}
-	C.opus_decoder_destroy(dec.p)
-	dec.p = nil
-	return nil
 }

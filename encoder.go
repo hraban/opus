@@ -17,15 +17,30 @@ import "C"
 
 type Encoder struct {
 	p *C.struct_OpusEncoder
+	// Memory for the encoder struct allocated on the Go heap to allow Go GC to
+	// manage it (and obviate need to free())
+	mem []byte
 }
 
+// NewEncoder allocates a new Opus encoder and initializes it with the
+// appropriate parameters. All related memory is managed by the Go GC.
 func NewEncoder(sample_rate int, channels int, application Application) (*Encoder, error) {
-	var errno int
-	p := C.opus_encoder_create(C.opus_int32(sample_rate), C.int(channels), C.int(application), (*C.int)(unsafe.Pointer(&errno)))
-	if errno != 0 {
-		return nil, opuserr(errno)
+	if channels != 1 && channels != 2 {
+		return nil, fmt.Errorf("Number of channels must be 1 or 2: %d", channels)
 	}
-	return &Encoder{p: p}, nil
+	var e Encoder
+	size := C.opus_encoder_get_size(C.int(channels))
+	e.mem = make([]byte, size)
+	e.p = (*C.OpusEncoder)(unsafe.Pointer(&e.mem[0]))
+	errno := int(C.opus_encoder_init(
+		e.p,
+		C.opus_int32(sample_rate),
+		C.int(channels),
+		C.int(application)))
+	if errno != 0 {
+		return nil, opuserr(int(errno))
+	}
+	return &e, nil
 }
 
 func (enc *Encoder) Encode(pcm []int16) ([]byte, error) {
@@ -61,14 +76,4 @@ func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
 		return nil, opuserr(n)
 	}
 	return data[:n], nil
-}
-
-// Returns an error if the encoder was already closed
-func (enc *Encoder) Close() error {
-	if enc.p == nil {
-		return fmt.Errorf("opus: encoder already closed")
-	}
-	C.opus_encoder_destroy(enc.p)
-	enc.p = nil
-	return nil
 }
