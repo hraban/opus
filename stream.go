@@ -105,6 +105,27 @@ func (s *Stream) Read(pcm []int16) (int, error) {
 	return int(n), nil
 }
 
+func (s *Stream) ReadFloat32(pcm []float32) (int, error) {
+	if s.oggfile == nil {
+		return 0, fmt.Errorf("opus stream is uninitialized or already closed")
+	}
+	if len(pcm) == 0 {
+		return 0, nil
+	}
+	n := C.op_read_float(
+		s.oggfile,
+		(*C.float)(&pcm[0]),
+		C.int(len(pcm)),
+		nil)
+	if n < 0 {
+		return 0, opusfileerr(n)
+	}
+	if n == 0 {
+		return 0, io.EOF
+	}
+	return int(n), nil
+}
+
 func (s *Stream) Close() error {
 	if s.oggfile == nil {
 		return fmt.Errorf("opus stream is uninitialized or already closed")
