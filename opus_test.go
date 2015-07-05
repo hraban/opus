@@ -38,6 +38,16 @@ func TestDecoderNew(t *testing.T) {
 	}
 }
 
+func TestOpuserr(t *testing.T) {
+	// I scooped this -1 up from opus_defines.h, it's OPUS_BAD_ARG. Not pretty,
+	// but it's better than not testing at all. Again, accessing #defines from
+	// CGO is not possible.
+	err := opuserr(-1)
+	if err.Error() != "opus: invalid argument" {
+		t.Errorf("Expected \"invalid argument\" error message for error code -1: %v")
+	}
+}
+
 func addSineFloat32(buf []float32, sampleRate int, freq float64) {
 	factor := 2 * math.Pi * freq / float64(sampleRate)
 	for i := range buf {
