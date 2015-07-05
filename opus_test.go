@@ -38,6 +38,30 @@ func TestDecoderNew(t *testing.T) {
 	}
 }
 
+func TestEncoderUnitialized(t *testing.T) {
+	var enc Encoder
+	_, err := enc.Encode(nil)
+	if err != errEncUninitialized {
+		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
+	}
+	_, err = enc.EncodeFloat32(nil)
+	if err != errEncUninitialized {
+		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
+	}
+}
+
+func TestDecoderUnitialized(t *testing.T) {
+	var dec Decoder
+	_, err := dec.Decode(nil)
+	if err != errDecUninitialized {
+		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
+	}
+	_, err = dec.DecodeFloat32(nil)
+	if err != errDecUninitialized {
+		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
+	}
+}
+
 func TestOpuserr(t *testing.T) {
 	// I scooped this -1 up from opus_defines.h, it's OPUS_BAD_ARG. Not pretty,
 	// but it's better than not testing at all. Again, accessing #defines from
