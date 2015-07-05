@@ -81,6 +81,9 @@ func (s *Stream) Init(read io.Reader) error {
 }
 
 func (s *Stream) Read() ([]int16, error) {
+	if s.oggfile == nil {
+		return nil, fmt.Errorf("opus stream is uninitialized or already closed")
+	}
 	pcm := make([]int16, xMAX_FRAME_SIZE)
 	n := C.op_read(
 		s.oggfile,
@@ -91,4 +94,12 @@ func (s *Stream) Read() ([]int16, error) {
 		return nil, opusfileerr(n)
 	}
 	return pcm[:n], nil
+}
+
+func (s *Stream) Close() error {
+	if s.oggfile == nil {
+		return fmt.Errorf("opus stream is uninitialized or already closed")
+	}
+	C.op_free(s.oggfile)
+	return nil
 }
