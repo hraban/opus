@@ -5,7 +5,7 @@ export PKG_CONFIG_PATH :=$(PWD)/$(BUILDDIR)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
 .PHONY: clean distclean default test build all libopus libopusfile
 # Don't delete config.h files after succesful builds
-.PRECIOUS: %/config.h
+.PRECIOUS: %/config.h %/autogen.sh
 
 all: libopus libopusfile
 
