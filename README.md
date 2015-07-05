@@ -31,8 +31,9 @@ respective source directories, which are checked out as git submodules as part
 of the build process.
 
 However, because libopus and liboupsfile are not (by source nor binaries)
-included in this package, this package is (should be?) unaffected by their
-licenses.
+included in this package, this package, in source code form, is (should be?)
+unaffected by their licenses. That changes once you run make, which will
+download the Opus source code, and go build, which will link it.
 
 Hraban
 
