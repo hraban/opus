@@ -1,28 +1,35 @@
-BUILDDIR := libopusbuild
+BUILDDIR := build
 
-.PHONY: libopus clean default test build
+PWD=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+export PKG_CONFIG_PATH :=$(PWD)/$(BUILDDIR)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
-default: libopus
+.PHONY: clean distclean default test build all libopus libopusfile
+# Don't delete config.h files after succesful builds
+.PRECIOUS: %/config.h
 
-build:
-	go build
+all: libopus libopusfile
 
-test:
-	go test
+libopus: libopus.a
+libopusfile: libopus libopusfile.a
 
-libopus/config.h: libopus/autogen.sh
-	(cd libopus; ./autogen.sh)
-	(cd libopus; ./configure --prefix="$$PWD/../$(BUILDDIR)" --enable-fixed-point)
-
-libopus/autogen.sh:
+%/autogen.sh:
 	git submodule init
 	git submodule update
 
-libopus: libopus/config.h
-	$(MAKE) -C libopus
-	$(MAKE) -C libopus install
-	cp $(BUILDDIR)/lib/libopus.a .
+%/config.h: %/autogen.sh
+	(cd "$*"; ./autogen.sh)
+	(cd "$*"; ./configure --prefix="$$PWD/../$(BUILDDIR)" --enable-fixed-point)
 
-%clean:
-	$(MAKE) -C libopus $@
-	rm -rf $(BUILDDIR) libopus/configure.h 
+%.a: %/config.h
+	$(MAKE) -C "$*"
+	$(MAKE) -C "$*" install
+	cp "$(BUILDDIR)/lib/$@" .
+
+clean-%:
+	$(MAKE) -C "$*" clean
+
+distclean-%:
+	$(MAKE) -C "$*" distclean
+
+clean distclean: %: %-libopus %-libopusfile
+	rm -rf $(BUILDDIR) *.a
