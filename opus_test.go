@@ -38,11 +38,50 @@ func TestDecoderNew(t *testing.T) {
 	}
 }
 
-func addSine(buf []float32, sampleRate int, freq float64) {
+func addSineFloat32(buf []float32, sampleRate int, freq float64) {
 	factor := 2 * math.Pi * freq / float64(sampleRate)
 	for i := range buf {
 		buf[i] += float32(math.Sin(float64(i) * factor))
 	}
+}
+
+func addSine(buf []int16, sampleRate int, freq float64) {
+	factor := 2 * math.Pi * freq / float64(sampleRate)
+	for i := range buf {
+		buf[i] += int16(math.Sin(float64(i)*factor) * math.MaxInt16)
+	}
+}
+
+func TestCodec(t *testing.T) {
+	// Create bogus input sound
+	const G4 = 391.995
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 60
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	pcm := make([]int16, FRAME_SIZE)
+	enc, err := NewEncoder(SAMPLE_RATE, 1, APPLICATION_VOIP)
+	if err != nil || enc == nil {
+		t.Fatalf("Error creating new encoder: %v", err)
+	}
+	addSine(pcm, SAMPLE_RATE, G4)
+	data, err := enc.Encode(pcm)
+	if err != nil {
+		t.Fatalf("Couldn't encode data: %v", err)
+	}
+	dec, err := NewDecoder(SAMPLE_RATE, 1)
+	if err != nil || dec == nil {
+		t.Fatalf("Error creating new decoder: %v", err)
+	}
+	pcm2, err := dec.Decode(data)
+	if err != nil {
+		t.Fatalf("Couldn't decode data: %v", err)
+	}
+	if len(pcm) != len(pcm2) {
+		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), len(pcm2))
+	}
+	// Checking the output programmatically is seriously not easy. I checked it
+	// by hand and by ear, it looks fine. I'll just assume the API faithfully
+	// passes error codes through, and that's that.
 }
 
 func TestCodecFloat32(t *testing.T) {
@@ -56,7 +95,7 @@ func TestCodecFloat32(t *testing.T) {
 	if err != nil || enc == nil {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
-	addSine(pcm, SAMPLE_RATE, G4)
+	addSineFloat32(pcm, SAMPLE_RATE, G4)
 	data, err := enc.EncodeFloat32(pcm)
 	if err != nil {
 		t.Fatalf("Couldn't encode data: %v", err)
@@ -72,7 +111,4 @@ func TestCodecFloat32(t *testing.T) {
 	if len(pcm) != len(pcm2) {
 		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), len(pcm2))
 	}
-	// Checking the output programmatically is seriously not easy. I checked it
-	// by hand and by ear, it looks fine. I'll just assume the API faithfully
-	// passes error codes through, and that's that.
 }

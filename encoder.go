@@ -28,11 +28,28 @@ func NewEncoder(sample_rate int, channels int, application Application) (*Encode
 	return &Encoder{p: p}, nil
 }
 
-func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
+func (enc *Encoder) Encode(pcm []int16) ([]byte, error) {
 	if pcm == nil || len(pcm) == 0 {
 		return nil, fmt.Errorf("opus: no data supplied")
 	}
 	// I never know how much to allocate
+	data := make([]byte, 10000)
+	n := int(C.opus_encode(
+		enc.p,
+		(*C.opus_int16)(&pcm[0]),
+		C.int(len(pcm)),
+		(*C.uchar)(&data[0]),
+		C.opus_int32(cap(data))))
+	if n < 0 {
+		return nil, opuserr(n)
+	}
+	return data[:n], nil
+}
+
+func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
+	if pcm == nil || len(pcm) == 0 {
+		return nil, fmt.Errorf("opus: no data supplied")
+	}
 	data := make([]byte, 10000)
 	n := int(C.opus_encode_float(
 		enc.p,

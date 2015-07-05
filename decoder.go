@@ -33,11 +33,29 @@ func NewDecoder(sample_rate int, channels int) (*Decoder, error) {
 	return dec, nil
 }
 
-func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
+func (dec *Decoder) Decode(data []byte) ([]int16, error) {
 	if data == nil || len(data) == 0 {
 		return nil, fmt.Errorf("opus: no data supplied")
 	}
 	// I don't know how big this frame will be, but this is the limit
+	pcm := make([]int16, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
+	n := int(C.opus_decode(
+		dec.p,
+		(*C.uchar)(&data[0]),
+		C.opus_int32(len(data)),
+		(*C.opus_int16)(&pcm[0]),
+		C.int(cap(pcm)),
+		0))
+	if n < 0 {
+		return nil, opuserr(n)
+	}
+	return pcm[:n], nil
+}
+
+func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
+	if data == nil || len(data) == 0 {
+		return nil, fmt.Errorf("opus: no data supplied")
+	}
 	pcm := make([]float32, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
 	n := int(C.opus_decode_float(
 		dec.p,
