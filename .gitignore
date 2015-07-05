@@ -18,5 +18,6 @@ _testmain.go
 *~
 *.orig
 
+/build/
 libopus.a
 libopusfile.a
