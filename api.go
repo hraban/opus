@@ -20,7 +20,7 @@ import (
 //
 // If I missed something, and somebody knows a better way: please let me know.
 #cgo LDFLAGS: libopus.a -lm
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ilibopusbuild/include
+#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
 #include <opus/opus.h>
 */
 import "C"
