@@ -19,3 +19,4 @@ _testmain.go
 *.orig
 
 libopus.a
+libopusfile.a
