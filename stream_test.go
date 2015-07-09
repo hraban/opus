@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func TestStream(t *testing.T) {
+func TestStreamIllegal(t *testing.T) {
 	// Simple testing, no actual decoding
 	reader := strings.NewReader("hello test test this is not a legal Opus stream")
 	_, err := NewStream(reader)
@@ -45,7 +45,7 @@ func readStreamWav(stream *Stream) ([]byte, error) {
 	}
 }
 
-func TestFile(t *testing.T) {
+func TestStream(t *testing.T) {
 	// Simple testing, no actual decoding
 	reader, err := os.Open("testdata/speech_8.opus")
 	if err != nil {
