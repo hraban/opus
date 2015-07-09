@@ -84,6 +84,9 @@ func (s *Stream) Init(read io.Reader) error {
 // Read a chunk of raw opus data from the stream and decode it. Returns the
 // number of decoded samples per channel. This means that a dual channel
 // (stereo) feed will have twice as many samples as the value returned.
+//
+// Read may successfully read less bytes than requested, but it will never read
+// exactly zero bytes succesfully if a non-zero buffer is supplied.
 func (s *Stream) Read(pcm []int16) (int, error) {
 	if s.oggfile == nil {
 		return 0, fmt.Errorf("opus stream is uninitialized or already closed")
