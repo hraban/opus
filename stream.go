@@ -131,5 +131,8 @@ func (s *Stream) Close() error {
 		return fmt.Errorf("opus stream is uninitialized or already closed")
 	}
 	C.op_free(s.oggfile)
+	if closer, ok := s.read.(io.Closer); ok {
+		return closer.Close()
+	}
 	return nil
 }

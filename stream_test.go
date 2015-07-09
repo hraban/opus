@@ -5,15 +5,20 @@
 package opus
 
 import (
+	"io"
 	"strings"
 	"testing"
 )
 
-func Test(t *testing.T) {
+func TestStream(t *testing.T) {
 	// Simple testing, no actual decoding
 	reader := strings.NewReader("hello")
 	_, err := NewStream(reader)
 	if err == nil {
 		t.Fatalf("Expected error while initializing illegal opus stream")
 	}
+}
+
+func TestCloser(t *testing.T) {
+	/* TODO: test if stream.Close() also closes the underlying reader */
 }
