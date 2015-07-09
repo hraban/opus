@@ -66,6 +66,7 @@ func (s *Stream) Init(read io.Reader) error {
 		return fmt.Errorf("Reader must be non-nil")
 	}
 	s.read = read
+	s.buf = make([]byte, maxEncodedFrameSize)
 	var errno C.int
 	oggfile := C.op_open_callbacks(
 		unsafe.Pointer(s),
@@ -77,7 +78,6 @@ func (s *Stream) Init(read io.Reader) error {
 		return opusfileerr(errno)
 	}
 	s.oggfile = oggfile
-	s.buf = make([]byte, maxEncodedFrameSize)
 	return nil
 }
 
