@@ -6,7 +6,6 @@ package opus
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -22,21 +21,21 @@ func TestStreamIllegal(t *testing.T) {
 	}
 }
 
-func readStreamWav(stream *Stream) ([]byte, error) {
+func readStreamWav(t *testing.T, stream *Stream, buffersize int) []byte {
 	var buf bytes.Buffer
-	pcm := make([]int16, 1000)
+	pcm := make([]int16, buffersize)
 	for {
 		n, err := stream.Read(pcm)
 		switch err {
 		case io.EOF:
-			return buf.Bytes(), nil
+			return buf.Bytes()
 		case nil:
 			break
 		default:
-			return nil, err
+			t.Fatalf("Error while decoding opus file: %v", err)
 		}
 		if n == 0 {
-			return nil, fmt.Errorf("Nil-error Read() must not return 0")
+			t.Fatal("Nil-error Read() must not return 0")
 		}
 		for i := 0; i < n; i++ {
 			buf.WriteByte(byte(pcm[i] & 0xff))
@@ -45,9 +44,8 @@ func readStreamWav(stream *Stream) ([]byte, error) {
 	}
 }
 
-func TestStream(t *testing.T) {
-	// Simple testing, no actual decoding
-	reader, err := os.Open("testdata/speech_8.opus")
+func readFileWav(t *testing.T, fname string, buffersize int) []byte {
+	reader, err := os.Open(fname)
 	if err != nil {
 		t.Fatalf("Error while opening file: %v", err)
 	}
@@ -55,12 +53,21 @@ func TestStream(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while creating opus stream: %v", err)
 	}
-	wav, err := readStreamWav(stream)
-	if err != nil {
-		t.Fatalf("Error while decoding opus file: %v", err)
-	}
+	return readStreamWav(t, stream, buffersize)
+}
+
+func TestStream(t *testing.T) {
+	wav := readFileWav(t, "testdata/speech_8.opus", 10000)
 	if len(wav) != 1036800 {
 		t.Fatalf("Unexpected length of WAV file: %d", len(wav))
+	}
+}
+
+func TestStreamSmallBuffer(t *testing.T) {
+	smallbuf := readFileWav(t, "testdata/speech_8.opus", 1)
+	bigbuf := readFileWav(t, "testdata/speech_8.opus", 10000)
+	if !bytes.Equal(smallbuf, bigbuf) {
+		t.Errorf("Reading with 1-sample buffer size yields different audio data")
 	}
 }
 
