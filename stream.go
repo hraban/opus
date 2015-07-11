@@ -31,7 +31,7 @@ func go_readproxy(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
 	// Don't bother cleaning up old data because that's not required by the
 	// io.Reader API.
 	n, err := stream.read.Read(stream.buf[:maxbytes])
-	if err != nil || n == 0 {
+	if (err != nil && err != io.EOF) || n == 0 {
 		return 0
 	}
 	C.memcpy(unsafe.Pointer(cbuf), unsafe.Pointer(&stream.buf[0]), C.size_t(n))
@@ -87,6 +87,10 @@ func (s *Stream) Init(read io.Reader) error {
 //
 // Read may successfully read less bytes than requested, but it will never read
 // exactly zero bytes succesfully if a non-zero buffer is supplied.
+//
+// The number of channels in the output data must be known in advance. It is
+// possible to extract this information from the stream itself, but I'm not
+// motivated to do that. Feel free to send a pull request.
 func (s *Stream) Read(pcm []int16) (int, error) {
 	if s.oggfile == nil {
 		return 0, fmt.Errorf("opus stream is uninitialized or already closed")
