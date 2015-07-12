@@ -5,10 +5,11 @@
 package opus
 
 import (
-	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -22,14 +23,14 @@ func TestStreamIllegal(t *testing.T) {
 	}
 }
 
-func readStreamWav(t *testing.T, stream *Stream, buffersize int) []byte {
-	var buf bytes.Buffer
-	pcm := make([]int16, buffersize)
+func readStreamPcm(t *testing.T, stream *Stream, buffersize int) []int16 {
+	var pcm []int16
+	pcmbuf := make([]int16, buffersize)
 	for {
-		n, err := stream.Read(pcm)
+		n, err := stream.Read(pcmbuf)
 		switch err {
 		case io.EOF:
-			return buf.Bytes()
+			return pcm
 		case nil:
 			break
 		default:
@@ -38,10 +39,7 @@ func readStreamWav(t *testing.T, stream *Stream, buffersize int) []byte {
 		if n == 0 {
 			t.Fatal("Nil-error Read() must not return 0")
 		}
-		for i := 0; i < n; i++ {
-			buf.WriteByte(byte(pcm[i] & 0xff))
-			buf.WriteByte(byte(pcm[i] >> 8))
-		}
+		pcm = append(pcm, pcmbuf[:n]...)
 	}
 }
 
@@ -63,26 +61,46 @@ func mustOpenStream(t *testing.T, r io.Reader) *Stream {
 	return stream
 }
 
-func readFileWav(t *testing.T, fname string, buffersize int) []byte {
+func opus2pcm(t *testing.T, fname string, buffersize int) []int16 {
 	reader := mustOpenFile(t, fname)
 	stream, err := NewStream(reader)
 	if err != nil {
 		t.Fatalf("Error while creating opus stream: %v", err)
 	}
-	return readStreamWav(t, stream, buffersize)
+	return readStreamPcm(t, stream, buffersize)
+}
+
+// Extract raw pcm data from .wav file
+func exctractWavPcm(t *testing.T, fname string) []int16 {
+	bytes, err := ioutil.ReadFile(fname)
+	if err != nil {
+		t.Fatalf("Error reading file data from %s: %v", fname, err)
+	}
+	const wavHeaderSize = 44
+	if (len(bytes)-wavHeaderSize)%2 == 1 {
+		t.Fatalf("Illegal wav data: payload must be encoded in byte pairs")
+	}
+	numSamples := (len(bytes) - wavHeaderSize) / 2
+	samples := make([]int16, numSamples)
+	for i := 0; i < numSamples; i++ {
+		samples[i] += int16(bytes[wavHeaderSize+i*2])
+		samples[i] += int16(bytes[wavHeaderSize+i*2+1]) << 8
+	}
+	return samples
 }
 
 func TestStream(t *testing.T) {
-	wav := readFileWav(t, "testdata/speech_8.opus", 10000)
-	if len(wav) != 1036800 {
-		t.Fatalf("Unexpected length of WAV file: %d", len(wav))
+	pcm := opus2pcm(t, "testdata/speech_8.opus", 10000)
+	if len(pcm) != 518400 {
+		t.Fatalf("Unexpected length of decoded opus file: %d", len(pcm))
 	}
+
 }
 
 func TestStreamSmallBuffer(t *testing.T) {
-	smallbuf := readFileWav(t, "testdata/speech_8.opus", 1)
-	bigbuf := readFileWav(t, "testdata/speech_8.opus", 10000)
-	if !bytes.Equal(smallbuf, bigbuf) {
+	smallbuf := opus2pcm(t, "testdata/speech_8.opus", 1)
+	bigbuf := opus2pcm(t, "testdata/speech_8.opus", 10000)
+	if !reflect.DeepEqual(smallbuf, bigbuf) {
 		t.Errorf("Reading with 1-sample buffer size yields different audio data")
 	}
 }
