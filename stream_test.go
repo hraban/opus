@@ -6,6 +6,7 @@ package opus
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -44,11 +45,26 @@ func readStreamWav(t *testing.T, stream *Stream, buffersize int) []byte {
 	}
 }
 
-func readFileWav(t *testing.T, fname string, buffersize int) []byte {
-	reader, err := os.Open(fname)
+func mustOpenFile(t *testing.T, fname string) *os.File {
+	f, err := os.Open(fname)
 	if err != nil {
-		t.Fatalf("Error while opening file: %v", err)
+		t.Fatalf("Error while opening %s: %v", fname, err)
+		return nil
 	}
+	return f
+}
+
+func mustOpenStream(t *testing.T, r io.Reader) *Stream {
+	stream, err := NewStream(r)
+	if err != nil {
+		t.Fatalf("Error while creating opus stream: %v", err)
+		return nil
+	}
+	return stream
+}
+
+func readFileWav(t *testing.T, fname string, buffersize int) []byte {
+	reader := mustOpenFile(t, fname)
 	stream, err := NewStream(reader)
 	if err != nil {
 		t.Fatalf("Error while creating opus stream: %v", err)
@@ -71,6 +87,25 @@ func TestStreamSmallBuffer(t *testing.T) {
 	}
 }
 
+type mockCloser struct {
+	io.Reader
+	closed bool
+}
+
+func (m *mockCloser) Close() error {
+	if m.closed {
+		return fmt.Errorf("Already closed")
+	}
+	m.closed = true
+	return nil
+}
+
 func TestCloser(t *testing.T) {
-	/* TODO: test if stream.Close() also closes the underlying reader */
+	f := mustOpenFile(t, "testdata/speech_8.opus")
+	mc := &mockCloser{Reader: f}
+	stream := mustOpenStream(t, mc)
+	stream.Close()
+	if !mc.closed {
+		t.Error("Expected opus stream to call .Close on the reader")
+	}
 }
