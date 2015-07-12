@@ -4,6 +4,8 @@
  * https://code.google.com/p/go-wiki/wiki/cgo
  */
 
+#include "callback_proxy.h"
+
 int go_readproxy(void *p, unsigned char *buf, int nbytes);
 
 int
