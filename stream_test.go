@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"reflect"
 	"strings"
@@ -71,7 +72,7 @@ func opus2pcm(t *testing.T, fname string, buffersize int) []int16 {
 }
 
 // Extract raw pcm data from .wav file
-func exctractWavPcm(t *testing.T, fname string) []int16 {
+func extractWavPcm(t *testing.T, fname string) []int16 {
 	bytes, err := ioutil.ReadFile(fname)
 	if err != nil {
 		t.Fatalf("Error reading file data from %s: %v", fname, err)
@@ -89,12 +90,35 @@ func exctractWavPcm(t *testing.T, fname string) []int16 {
 	return samples
 }
 
-func TestStream(t *testing.T) {
-	pcm := opus2pcm(t, "testdata/speech_8.opus", 10000)
-	if len(pcm) != 518400 {
-		t.Fatalf("Unexpected length of decoded opus file: %d", len(pcm))
+func maxDiff(a []int16, b []int16) int32 {
+	if len(a) != len(b) {
+		return math.MaxInt16
 	}
+	var max int32 = 0
+	for i := range a {
+		d := int32(a[i]) - int32(b[i])
+		if d < 0 {
+			d = -d
+		}
+		if d > max {
+			max = d
+		}
+	}
+	return max
+}
 
+func TestStream(t *testing.T) {
+	opuspcm := opus2pcm(t, "testdata/speech_8.opus", 10000)
+	wavpcm := extractWavPcm(t, "testdata/speech_8.wav")
+	if len(opuspcm) != len(wavpcm) {
+		t.Fatalf("Unexpected length of decoded opus file: %d (.wav: %d)", len(opuspcm), len(wavpcm))
+	}
+	d := maxDiff(opuspcm, wavpcm)
+	// No science behind this number
+	const epsilon = 12
+	if d > epsilon {
+		t.Errorf("Maximum difference between decoded streams too high: %d", d)
+	}
 }
 
 func TestStreamSmallBuffer(t *testing.T) {
