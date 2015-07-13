@@ -30,8 +30,6 @@ import "C"
 
 type opusFileError int
 
-var opusfileErrcodes = map[C.int]error{}
-
 var (
 	ERR_OP_FALSE         = opusFileError(C.CONST_OP_FALSE)
 	ERR_OP_EOF           = opusFileError(C.CONST_OP_EOF)

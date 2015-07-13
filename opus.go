@@ -18,7 +18,7 @@ package opus
 #cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
 #include <opus/opus.h>
 
-// Remap #defines to avoid depending on their literal value
+// Access the preprocessor from CGO
 const int CONST_APPLICATION_VOIP = OPUS_APPLICATION_VOIP;
 const int CONST_APPLICATION_AUDIO = OPUS_APPLICATION_AUDIO;
 const int CONST_APPLICATION_RESTRICTED_LOWDELAY = OPUS_APPLICATION_RESTRICTED_LOWDELAY;

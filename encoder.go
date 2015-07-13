@@ -17,8 +17,7 @@ import "C"
 
 var errEncUninitialized = fmt.Errorf("opus encoder uninitialized")
 
-// Encoder contains the state of an Opus encoder for libopus. Do not use this
-// directly, but call
+// Encoder contains the state of an Opus encoder for libopus.
 type Encoder struct {
 	p *C.struct_OpusEncoder
 	// Memory for the encoder struct allocated on the Go heap to allow Go GC to
