@@ -10,7 +10,9 @@ import (
 #cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include/opus
 #include <opusfile.h>
 #include <string.h>
-#include "callback_proxy.h"
+
+// Uses the same signature as Go, no need for proxy
+int go_readcallback(void *p, unsigned char *buf, int nbytes);
 */
 import "C"
 
@@ -21,8 +23,8 @@ type Stream struct {
 	buf []byte
 }
 
-//export go_readproxy
-func go_readproxy(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
+//export go_readcallback
+func go_readcallback(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
 	stream := (*Stream)(p)
 	maxbytes := int(cmaxbytes)
 	if maxbytes > cap(stream.buf) {
@@ -39,7 +41,7 @@ func go_readproxy(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
 }
 
 var callbacks = C.struct_OpusFileCallbacks{
-	read:  C.op_read_func(C.c_readproxy),
+	read:  C.op_read_func(C.go_readcallback),
 	seek:  nil,
 	tell:  nil,
 	close: nil,
