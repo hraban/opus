@@ -17,20 +17,25 @@ package opus
 #cgo LDFLAGS: libopusfile.a libopus.a -logg -lm
 #cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
 #include <opus/opus.h>
+
+// Remap #defines to avoid depending on their literal value
+const int CONST_APPLICATION_VOIP = OPUS_APPLICATION_VOIP;
+const int CONST_APPLICATION_AUDIO = OPUS_APPLICATION_AUDIO;
+const int CONST_APPLICATION_RESTRICTED_LOWDELAY = OPUS_APPLICATION_RESTRICTED_LOWDELAY;
 */
 import "C"
 
 type Application int
 
-// These constants should be taken from the library instead of defined here.
-// Unfortunatly, they are #defines, and CGO can't import those.
-const (
+// These variables should be constants, but for interoperability with CGO
+// they're var. Don't change them, though!
+var (
 	// Optimize encoding for VOIP
-	APPLICATION_VOIP Application = 2048
+	APPLICATION_VOIP = Application(C.CONST_APPLICATION_VOIP)
 	// Optimize encoding for non-voice signals like music
-	APPLICATION_AUDIO Application = 2049
+	APPLICATION_AUDIO = Application(C.CONST_APPLICATION_AUDIO)
 	// Optimize encoding for low latency applications
-	APPLICATION_RESTRICTED_LOWDELAY Application = 2051
+	APPLICATION_RESTRICTED_LOWDELAY = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
 const (

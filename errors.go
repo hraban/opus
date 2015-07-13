@@ -5,8 +5,26 @@ import (
 )
 
 /*
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
+#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include -Ibuild/include/opus
 #include <opus/opus.h>
+#include <opusfile.h>
+
+// Access the preprocessor from CGO
+const int CONST_OP_FALSE = OP_FALSE;
+const int CONST_OP_EOF = OP_EOF;
+const int CONST_OP_HOLE = OP_HOLE;
+const int CONST_OP_EREAD = OP_EREAD;
+const int CONST_OP_EFAULT = OP_EFAULT;
+const int CONST_OP_EIMPL = OP_EIMPL;
+const int CONST_OP_EINVAL = OP_EINVAL;
+const int CONST_OP_ENOTFORMAT = OP_ENOTFORMAT;
+const int CONST_OP_EBADHEADER = OP_EBADHEADER;
+const int CONST_OP_EVERSION = OP_EVERSION;
+const int CONST_OP_ENOTAUDIO = OP_ENOTAUDIO;
+const int CONST_OP_EBADPACKET = OP_EBADPACKET;
+const int CONST_OP_EBADLINK = OP_EBADLINK;
+const int CONST_OP_ENOSEEK = OP_ENOSEEK;
+const int CONST_OP_EBADTIMESTAMP = OP_EBADTIMESTAMP;
 */
 import "C"
 
@@ -14,22 +32,22 @@ type opusFileError int
 
 var opusfileErrcodes = map[C.int]error{}
 
-const (
-	ERR_OP_FALSE         opusFileError = -1
-	ERR_OP_EOF                         = -2
-	ERR_OP_HOLE                        = -3
-	ERR_OP_EREAD                       = -128
-	ERR_OP_EFAULT                      = -129
-	ERR_OP_EIMPL                       = -130
-	ERR_OP_EINVAL                      = -131
-	ERR_OP_ENOTFORMAT                  = -132
-	ERR_OP_EBADHEADER                  = -133
-	ERR_OP_EVERSION                    = -134
-	ERR_OP_ENOTAUDIO                   = -135
-	ERR_OP_EBADPACKET                  = -136
-	ERR_OP_EBADLINK                    = -137
-	ERR_OP_ENOSEEK                     = -138
-	ERR_OP_EBADTIMESTAMP               = -139
+var (
+	ERR_OP_FALSE         = opusFileError(C.CONST_OP_FALSE)
+	ERR_OP_EOF           = opusFileError(C.CONST_OP_EOF)
+	ERR_OP_HOLE          = opusFileError(C.CONST_OP_HOLE)
+	ERR_OP_EREAD         = opusFileError(C.CONST_OP_EREAD)
+	ERR_OP_EFAULT        = opusFileError(C.CONST_OP_EFAULT)
+	ERR_OP_EIMPL         = opusFileError(C.CONST_OP_EIMPL)
+	ERR_OP_EINVAL        = opusFileError(C.CONST_OP_EINVAL)
+	ERR_OP_ENOTFORMAT    = opusFileError(C.CONST_OP_ENOTFORMAT)
+	ERR_OP_EBADHEADER    = opusFileError(C.CONST_OP_EBADHEADER)
+	ERR_OP_EVERSION      = opusFileError(C.CONST_OP_EVERSION)
+	ERR_OP_ENOTAUDIO     = opusFileError(C.CONST_OP_ENOTAUDIO)
+	ERR_OP_EBADPACKET    = opusFileError(C.CONST_OP_EBADPACKET)
+	ERR_OP_EBADLINK      = opusFileError(C.CONST_OP_EBADLINK)
+	ERR_OP_ENOSEEK       = opusFileError(C.CONST_OP_ENOSEEK)
+	ERR_OP_EBADTIMESTAMP = opusFileError(C.CONST_OP_EBADTIMESTAMP)
 )
 
 func (i opusFileError) Error() string {
