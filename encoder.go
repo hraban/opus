@@ -36,8 +36,9 @@ func NewEncoder(sample_rate int, channels int, application Application) (*Encode
 	return &enc, nil
 }
 
-// Init initializes a pre-allocated opus encoder. Must be called exactly once in
-// the life-time of this object, before calling any other methods.
+// Init initializes a pre-allocated opus encoder. Unless the encoder has been
+// created using NewEncoder, this method must be called exactly once in the
+// life-time of this object, before calling any other methods.
 func (enc *Encoder) Init(sample_rate int, channels int, application Application) error {
 	if enc.p != nil {
 		return fmt.Errorf("opus encoder already initialized")
