@@ -60,14 +60,18 @@ func (enc *Encoder) Init(sample_rate int, channels int, application Application)
 	return nil
 }
 
-func (enc *Encoder) Encode(pcm []int16) ([]byte, error) {
+// Encode raw PCM data and store the result in the supplied buffer. On success,
+// returns the number of bytes used up by the encoded data.
+func (enc *Encoder) Encode(pcm []int16, data []byte) (int, error) {
 	if enc.p == nil {
-		return nil, errEncUninitialized
+		return 0, errEncUninitialized
 	}
-	if pcm == nil || len(pcm) == 0 {
-		return nil, fmt.Errorf("opus: no data supplied")
+	if len(pcm) == 0 {
+		return 0, fmt.Errorf("opus: no data supplied")
 	}
-	data := make([]byte, maxEncodedFrameSize)
+	if len(data) == 0 {
+		return 0, fmt.Errorf("opus: no target buffer")
+	}
 	n := int(C.opus_encode(
 		enc.p,
 		(*C.opus_int16)(&pcm[0]),
@@ -75,19 +79,23 @@ func (enc *Encoder) Encode(pcm []int16) ([]byte, error) {
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {
-		return nil, opuserr(n)
+		return 0, opuserr(n)
 	}
-	return data[:n], nil
+	return n, nil
 }
 
-func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
+// Encode raw PCM data and store the result in the supplied buffer. On success,
+// returns the number of bytes used up by the encoded data.
+func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 	if enc.p == nil {
-		return nil, errEncUninitialized
+		return 0, errEncUninitialized
 	}
-	if pcm == nil || len(pcm) == 0 {
-		return nil, fmt.Errorf("opus: no data supplied")
+	if len(pcm) == 0 {
+		return 0, fmt.Errorf("opus: no data supplied")
 	}
-	data := make([]byte, maxEncodedFrameSize)
+	if len(data) == 0 {
+		return 0, fmt.Errorf("opus: no target buffer")
+	}
 	n := int(C.opus_encode_float(
 		enc.p,
 		(*C.float)(&pcm[0]),
@@ -95,7 +103,7 @@ func (enc *Encoder) EncodeFloat32(pcm []float32) ([]byte, error) {
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {
-		return nil, opuserr(n)
+		return 0, opuserr(n)
 	}
-	return data[:n], nil
+	return n, nil
 }

@@ -40,11 +40,11 @@ func TestDecoderNew(t *testing.T) {
 
 func TestEncoderUnitialized(t *testing.T) {
 	var enc Encoder
-	_, err := enc.Encode(nil)
+	_, err := enc.Encode(nil, nil)
 	if err != errEncUninitialized {
 		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
 	}
-	_, err = enc.EncodeFloat32(nil)
+	_, err = enc.EncodeFloat32(nil, nil)
 	if err != errEncUninitialized {
 		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
 	}
@@ -52,11 +52,11 @@ func TestEncoderUnitialized(t *testing.T) {
 
 func TestDecoderUnitialized(t *testing.T) {
 	var dec Decoder
-	_, err := dec.Decode(nil)
+	_, err := dec.Decode(nil, nil)
 	if err != errDecUninitialized {
 		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
 	}
-	_, err = dec.DecodeFloat32(nil)
+	_, err = dec.DecodeFloat32(nil, nil)
 	if err != errDecUninitialized {
 		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
 	}
@@ -98,20 +98,22 @@ func TestCodec(t *testing.T) {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
 	addSine(pcm, SAMPLE_RATE, G4)
-	data, err := enc.Encode(pcm)
+	data := make([]byte, 1000)
+	n, err := enc.Encode(pcm, data)
 	if err != nil {
 		t.Fatalf("Couldn't encode data: %v", err)
 	}
+	data = data[:n]
 	dec, err := NewDecoder(SAMPLE_RATE, 1)
 	if err != nil || dec == nil {
 		t.Fatalf("Error creating new decoder: %v", err)
 	}
-	pcm2, err := dec.Decode(data)
+	n, err = dec.Decode(data, pcm)
 	if err != nil {
 		t.Fatalf("Couldn't decode data: %v", err)
 	}
-	if len(pcm) != len(pcm2) {
-		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), len(pcm2))
+	if len(pcm) != n {
+		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), n)
 	}
 	// Checking the output programmatically is seriously not easy. I checked it
 	// by hand and by ear, it looks fine. I'll just assume the API faithfully
@@ -130,7 +132,8 @@ func TestCodecFloat32(t *testing.T) {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
 	addSineFloat32(pcm, SAMPLE_RATE, G4)
-	data, err := enc.EncodeFloat32(pcm)
+	data := make([]byte, 1000)
+	n, err := enc.EncodeFloat32(pcm, data)
 	if err != nil {
 		t.Fatalf("Couldn't encode data: %v", err)
 	}
@@ -138,11 +141,11 @@ func TestCodecFloat32(t *testing.T) {
 	if err != nil || dec == nil {
 		t.Fatalf("Error creating new decoder: %v", err)
 	}
-	pcm2, err := dec.DecodeFloat32(data)
+	n, err = dec.DecodeFloat32(data, pcm)
 	if err != nil {
 		t.Fatalf("Couldn't decode data: %v", err)
 	}
-	if len(pcm) != len(pcm2) {
-		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), len(pcm2))
+	if len(pcm) != n {
+		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), n)
 	}
 }

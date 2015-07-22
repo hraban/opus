@@ -56,15 +56,18 @@ func (dec *Decoder) Init(sample_rate int, channels int) error {
 	return nil
 }
 
-func (dec *Decoder) Decode(data []byte) ([]int16, error) {
+// Decode encoded Opus data into the supplied buffer. On success, returns the
+// number of samples correctly written to the target buffer.
+func (dec *Decoder) Decode(data []byte, pcm []int16) (int, error) {
 	if dec.p == nil {
-		return nil, errDecUninitialized
+		return 0, errDecUninitialized
 	}
-	if data == nil || len(data) == 0 {
-		return nil, fmt.Errorf("opus: no data supplied")
+	if len(data) == 0 {
+		return 0, fmt.Errorf("opus: no data supplied")
 	}
-	// I don't know how big this frame will be, but this is the limit
-	pcm := make([]int16, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
+	if len(pcm) == 0 {
+		return 0, fmt.Errorf("opus: target buffer empty")
+	}
 	n := int(C.opus_decode(
 		dec.p,
 		(*C.uchar)(&data[0]),
@@ -73,19 +76,23 @@ func (dec *Decoder) Decode(data []byte) ([]int16, error) {
 		C.int(cap(pcm)),
 		0))
 	if n < 0 {
-		return nil, opuserr(n)
+		return 0, opuserr(n)
 	}
-	return pcm[:n], nil
+	return n, nil
 }
 
-func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
+// Decode encoded Opus data into the supplied buffer. On success, returns the
+// number of samples correctly written to the target buffer.
+func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 	if dec.p == nil {
-		return nil, errDecUninitialized
+		return 0, errDecUninitialized
 	}
-	if data == nil || len(data) == 0 {
-		return nil, fmt.Errorf("opus: no data supplied")
+	if len(data) == 0 {
+		return 0, fmt.Errorf("opus: no data supplied")
 	}
-	pcm := make([]float32, xMAX_FRAME_SIZE_MS*dec.sample_rate/1000)
+	if len(pcm) == 0 {
+		return 0, fmt.Errorf("opus: target buffer empty")
+	}
 	n := int(C.opus_decode_float(
 		dec.p,
 		(*C.uchar)(&data[0]),
@@ -94,7 +101,7 @@ func (dec *Decoder) DecodeFloat32(data []byte) ([]float32, error) {
 		C.int(cap(pcm)),
 		0))
 	if n < 0 {
-		return nil, opuserr(n)
+		return 0, opuserr(n)
 	}
-	return pcm[:n], nil
+	return n, nil
 }
