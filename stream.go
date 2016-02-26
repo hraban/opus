@@ -7,7 +7,7 @@ import (
 )
 
 /*
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include/opus
+#cgo pkg-config: opus
 #include <opusfile.h>
 #include <string.h>
 

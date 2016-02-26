@@ -14,8 +14,7 @@ package opus
 // not the user.
 //
 // If I missed something, and somebody knows a better way: please let me know.
-#cgo LDFLAGS: libopusfile.a libopus.a -logg -lm
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
+#cgo pkg-config: opus
 #include <opus/opus.h>
 
 // Access the preprocessor from CGO
