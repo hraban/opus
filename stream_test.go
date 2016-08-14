@@ -1,4 +1,4 @@
-// Copyright © 2015 Hraban Luyat <hraban@0brg.net>
+// Copyright © 2015, 2016 Hraban Luyat <hraban@0brg.net>
 //
 // License for use of this code is detailed in the LICENSE file
 
