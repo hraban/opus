@@ -10,6 +10,7 @@ _cgo_*
 _obj
 _test
 _testmain.go
+*.test
 
 # Vim noise
 *.swp
@@ -17,7 +18,3 @@ _testmain.go
 # Just noise
 *~
 *.orig
-
-/build/
-libopus.a
-libopusfile.a
