@@ -64,10 +64,7 @@ func mustOpenStream(t *testing.T, r io.Reader) *Stream {
 
 func opus2pcm(t *testing.T, fname string, buffersize int) []int16 {
 	reader := mustOpenFile(t, fname)
-	stream, err := NewStream(reader)
-	if err != nil {
-		t.Fatalf("Error while creating opus stream: %v", err)
-	}
+	stream := mustOpenStream(t, reader)
 	return readStreamPcm(t, stream, buffersize)
 }
 
@@ -115,7 +112,7 @@ func TestStream(t *testing.T) {
 	}
 	d := maxDiff(opuspcm, wavpcm)
 	// No science behind this number
-	const epsilon = 12
+	const epsilon = 18
 	if d > epsilon {
 		t.Errorf("Maximum difference between decoded streams too high: %d", d)
 	}
