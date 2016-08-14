@@ -1,0 +1,10 @@
+language: go
+
+go: 1.6
+
+dist: trusty
+sudo: required
+
+before_install:
+- sudo apt-get update
+- sudo apt-get install pkg-config libopus-dev libopusfile-dev
