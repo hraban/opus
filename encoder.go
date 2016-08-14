@@ -10,7 +10,7 @@ import (
 )
 
 /*
-#cgo CFLAGS: -std=c99 -Wall -Werror -pedantic -Ibuild/include
+#cgo pkg-config: opus
 #include <opus/opus.h>
 */
 import "C"
