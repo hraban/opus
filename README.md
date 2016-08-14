@@ -8,7 +8,13 @@ library, that is, not the bindings. The bindings are by me, Hraban.
 Installation is a bit of a mess right now but I'm working on simplifying it.
 Here's the summary:
 
+Dependencies for debian based systems:
 ```sh
+sudo apt-get install autoconf libtool build-essential libssl-dev pkg-config libogg-dev libopus-dev libopusfile-dev
+```
+
+Building this package itself:
+```
 make
 go build
 ```
