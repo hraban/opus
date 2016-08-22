@@ -5,16 +5,8 @@
 package opus
 
 /*
-// Statically link libopus. Requires a libopus.a in every directory you use this
-// as a dependency in. Not great, but CGO doesn't offer anything better, right
-// now. Unless you require everyone who USES this package to have libopus
-// installed system-wide, which is more of a chore because it's so new. Everyone
-// will end up having to build it from source anyway, might as well just dump
-// the pre-built lib in here. At least it will be up to the package maintainer,
-// not the user.
-//
-// If I missed something, and somebody knows a better way: please let me know.
-#cgo pkg-config: opus
+// Link opus using pkg-config.
+#cgo pkg-config: --static opus
 #include <opus/opus.h>
 
 // Access the preprocessor from CGO
