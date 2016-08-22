@@ -15,8 +15,7 @@ import (
 #include <opusfile.h>
 #include <string.h>
 
-// Uses the same signature as Go, no need for proxy
-int go_readcallback(void *p, unsigned char *buf, int nbytes);
+extern struct OpusFileCallbacks callbacks;
 
 */
 import "C"
@@ -61,13 +60,6 @@ func go_readcallback(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
 	return C.int(n)
 }
 
-var callbacks = C.struct_OpusFileCallbacks{
-	read:  C.op_read_func(C.go_readcallback),
-	seek:  nil,
-	tell:  nil,
-	close: nil,
-}
-
 func NewStream(read io.Reader) (*Stream, error) {
 	var s Stream
 	err := s.Init(read)
@@ -104,7 +96,7 @@ func (s *Stream) Init(read io.Reader) error {
 	oggfile := C.op_open_callbacks(
 		// "C code may not keep a copy of a Go pointer after the call returns."
 		unsafe.Pointer(s.id),
-		&callbacks,
+		&C.callbacks,
 		nil,
 		0,
 		&errno)
