@@ -114,8 +114,5 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 
 // Configures the encoder's use of discontinuous transmission (DTX).
 func (enc *Encoder) UseDTX(use int) {
-	if use != 0 {
-		use = 1
-	}
 	C.bridge_use_dtx(enc.p, C.int(use))
 }
