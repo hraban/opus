@@ -13,8 +13,9 @@ import (
 #cgo pkg-config: opus
 #include <opus/opus.h>
 
-// Access the preprocessor from CGO
-const int CONST_OPUS_SET_DTX_REQUEST = OPUS_SET_DTX_REQUEST;
+int bridge_use_dtx(OpusEncoder *st, int use_dtx) {
+	return opus_encoder_ctl(st, OPUS_SET_DTX(use_dtx));
+}
 */
 import "C"
 
@@ -116,5 +117,5 @@ func (enc *Encoder) UseDTX(use int) {
 	if use != 0 {
 		use = 1
 	}
-	C.opus_encoder_ctl(enc.p, C.CONST_OPUS_SET_DTX_REQUEST, C.int(use))
+	C.bridge_use_dtx(enc.p, C.int(use))
 }
