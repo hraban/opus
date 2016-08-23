@@ -12,6 +12,9 @@ import (
 /*
 #cgo pkg-config: opus
 #include <opus/opus.h>
+
+// Access the preprocessor from CGO
+const int CONST_OPUS_SET_DTX_REQUEST = OPUS_SET_DTX_REQUEST;
 */
 import "C"
 
@@ -106,4 +109,12 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 		return 0, opuserr(n)
 	}
 	return n, nil
+}
+
+// Configures the encoder's use of discontinuous transmission (DTX).
+func (enc *Encoder) UseDTX(use int) {
+	if use != 0 {
+		use = 1
+	}
+	C.opus_encoder_ctl(enc.p, C.CONST_OPUS_SET_DTX_REQUEST, C.int(use))
 }
