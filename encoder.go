@@ -13,8 +13,14 @@ import (
 #cgo pkg-config: opus
 #include <opus/opus.h>
 
-int bridge_use_dtx(OpusEncoder *st, int use_dtx) {
+int bridge_set_dtx(OpusEncoder *st, int use_dtx) {
 	return opus_encoder_ctl(st, OPUS_SET_DTX(use_dtx));
+}
+
+int bridge_get_dtx(OpusEncoder *st) {
+	int dtx = 0;
+	opus_encoder_ctl(st, OPUS_GET_DTX(&dtx));
+	return dtx;
 }
 */
 import "C"
@@ -113,6 +119,15 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 }
 
 // Configures the encoder's use of discontinuous transmission (DTX).
-func (enc *Encoder) UseDTX(use int) {
-	C.bridge_use_dtx(enc.p, C.int(use))
+func (enc *Encoder) UseDTX(use bool) {
+	dtx := 0
+	if use {
+		dtx = 1
+	}
+	C.bridge_set_dtx(enc.p, C.int(dtx))
+}
+
+func (enc *Encoder) GetDTX() bool {
+	dtx := C.bridge_get_dtx(enc.p)
+	return dtx != 0
 }
