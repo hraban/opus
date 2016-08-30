@@ -1,9 +1,94 @@
 ## opus, by xiph.org
 
-This package provides Go bindings for the C library libopus, by xiph.org. The
-library, that is, not the bindings. The bindings are by me. Hraban.
+This package provides Go bindings for the C library libopus and libopusfile (by
+xiph.org).
 
-### Build & installation
+## Details
+
+This wrapper provides a Go translation layer for three elements from the
+xiph.org opus libs:
+
+* encoders
+* decoders
+* stream handlers
+
+### Examples
+
+To encode raw audio to the Opus format, create an encoder first:
+
+```go
+const sample_rate = 48000
+const channels = 1 // mono; 2 for stereo
+
+enc, err := opus.NewEncoder(sample_rate, channels, opus.APPLICATION_VOIP)
+if err != nil {
+    ...
+}
+```
+
+Then pass it some raw PCM data to encode.
+
+Make sure that the raw PCM data you want to encode has a legal Opus frame size.
+This means it must be exactly 2.5, 5, 10, 20, 40 or 60 ms long. The number of
+bytes this corresponds to depends on the sample rate (see the [libopus
+documentation](https://www.opus-codec.org/docs/opus_api-1.1.3/group__opus__encoder.html)).
+
+```go
+var pcm []int16 = ... // obtain your raw PCM data somewhere
+const buffer_size = 1000 // choose any buffer size you like. 1k is plenty.
+
+// Check the frame size. You don't need to do this if you trust your input.
+frame_size := len(pcm)
+frame_size_ms := float32(frame_size) * 1000 / sample_rate
+switch frame_size_ms {
+case 2.5, 5, 10, 20, 40, 60:
+    // Good.
+default:
+    return fmt.Errorf("Illegal frame size: %d bytes (%f ms)", frame_size, frame_size_ms)
+}
+
+data := make([]byte, buffer_size)
+n, err := enc.Encode(pcm, data)
+if err != nil {
+    ...
+}
+data = data[:n] // only the first N bytes are opus data. Just like io.Reader.
+```
+
+
+To decode opus data to raw PCM format, first create a decoder:
+
+```go
+dec, err := opus.NewDecoder(sample_rate, channels)
+if err != nil {
+    ...
+}
+```
+
+Now pass it the opus bytes, and a buffer to store the PCM sound in:
+
+```go
+var frame_size_ms float32 := ...  // if you don't know, go with 60 ms.
+frame_size := frame_size_ms * sample_rate / 1000
+pcm := make([]byte, int(frame_size))
+n, err := dec.Decode(data, pcm)
+if err != nil {
+    ...
+}
+pcm = pcm[:n] // only necessary if you didn't know the right frame size
+```
+
+For more examples, see the `_test.go` files.
+
+### API Docs
+
+Go wrapper API reference:
+https://godoc.org/github.com/hraban/opus
+
+Full libopus C API reference:
+https://www.opus-codec.org/docs/opus_api-1.1.3/
+
+## Build & installation
 
 This package requires libopus and libopusfile development packages to be
 installed on your system. These are available on Debian based systems from
@@ -25,10 +110,7 @@ Note that this will link the opus libraries dynamically. This means everyone who
 uses the resulting binary will need to have opus and opusfile installed (or
 otherwise provided).
 
-### License
+## License
 
-The licensing terms for the Go bindings are found in the LICENSE file.
-
-Hraban
-
-hraban@0brg.net
+The licensing terms for the Go bindings are found in the LICENSE file. The
+authors and copyright holders are listed in the AUTHORS file.
