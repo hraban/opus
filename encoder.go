@@ -127,7 +127,7 @@ func (enc *Encoder) UseDTX(use bool) {
 	C.bridge_set_dtx(enc.p, C.int(dtx))
 }
 
-func (enc *Encoder) GetDTX() bool {
+func (enc *Encoder) DTX() bool {
 	dtx := C.bridge_get_dtx(enc.p)
 	return dtx != 0
 }

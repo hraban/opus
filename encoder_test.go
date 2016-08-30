@@ -14,7 +14,7 @@ func TestUseDTX(t *testing.T) {
 	vals := []bool{true, false}
 	for _, dtx := range vals {
 		enc.UseDTX(dtx)
-		gotv := enc.GetDTX()
+		gotv := enc.DTX()
 		if gotv != dtx {
 			t.Errorf("Error set dtx: expect dtx=%v, got dtx=%v", dtx, gotv)
 		}
