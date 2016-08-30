@@ -13,14 +13,26 @@ import (
 #cgo pkg-config: opus
 #include <opus/opus.h>
 
-int bridge_set_dtx(OpusEncoder *st, int use_dtx) {
-	return opus_encoder_ctl(st, OPUS_SET_DTX(use_dtx));
+void
+bridge_encoder_set_dtx(OpusEncoder *st, opus_int32 use_dtx)
+{
+	opus_encoder_ctl(st, OPUS_SET_DTX(use_dtx));
 }
 
-int bridge_get_dtx(OpusEncoder *st) {
-	int dtx = 0;
+opus_int32
+bridge_encoder_get_dtx(OpusEncoder *st)
+{
+	opus_int32 dtx = 0;
 	opus_encoder_ctl(st, OPUS_GET_DTX(&dtx));
 	return dtx;
+}
+
+opus_int32
+bridge_encoder_get_sample_rate(OpusEncoder *st)
+{
+	opus_int32 sample_rate = 0;
+	opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(&sample_rate));
+	return sample_rate;
 }
 */
 import "C"
@@ -124,10 +136,14 @@ func (enc *Encoder) UseDTX(use bool) {
 	if use {
 		dtx = 1
 	}
-	C.bridge_set_dtx(enc.p, C.int(dtx))
+	C.bridge_encoder_set_dtx(enc.p, C.opus_int32(dtx))
 }
 
 func (enc *Encoder) DTX() bool {
-	dtx := C.bridge_get_dtx(enc.p)
+	dtx := C.bridge_encoder_get_dtx(enc.p)
 	return dtx != 0
+}
+
+func (enc *Encoder) SampleRate() int {
+	return int(C.bridge_encoder_get_sample_rate(enc.p))
 }
