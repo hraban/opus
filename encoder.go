@@ -130,7 +130,7 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 	return n, nil
 }
 
-// Configures the encoder's use of discontinuous transmission (DTX).
+// UseDTX configures the encoder's use of discontinuous transmission (DTX).
 func (enc *Encoder) UseDTX(use bool) {
 	dtx := 0
 	if use {
@@ -139,11 +139,14 @@ func (enc *Encoder) UseDTX(use bool) {
 	C.bridge_encoder_set_dtx(enc.p, C.opus_int32(dtx))
 }
 
+// DTX reports whether this encoder is configured to use discontinuous
+// transmission (DTX).
 func (enc *Encoder) DTX() bool {
 	dtx := C.bridge_encoder_get_dtx(enc.p)
 	return dtx != 0
 }
 
+// SampleRate returns the encoder sample rate in Hz.
 func (enc *Encoder) SampleRate() int {
 	return int(C.bridge_encoder_get_sample_rate(enc.p))
 }
