@@ -20,6 +20,10 @@ extern struct OpusFileCallbacks callbacks;
 */
 import "C"
 
+// Stream wraps a io.Reader in a decoding layer. It provides an API similar to
+// io.Reader, but it provides raw PCM data instead of the encoded Opus data.
+//
+// This wraps the libopusfile library.
 type Stream struct {
 	id      uintptr
 	oggfile *C.OggOpusFile
@@ -60,6 +64,7 @@ func go_readcallback(p unsafe.Pointer, cbuf *C.uchar, cmaxbytes C.int) C.int {
 	return C.int(n)
 }
 
+// NewStream creates and initializes a new stream. Don't call .Init() on this.
 func NewStream(read io.Reader) (*Stream, error) {
 	var s Stream
 	err := s.Init(read)
@@ -87,7 +92,7 @@ func (s *Stream) Init(read io.Reader) error {
 	var errno C.int
 
 	// Immediately delete the stream after .Init to avoid leaking if the
-	// caller forgets to (/ doesn't want to) call .Delete(). No need for that,
+	// caller forgets to (/ doesn't want to) call .Close(). No need for that,
 	// since the callback is only ever called during a .Read operation; just
 	// Save and Delete from the map around that every time a reader function is
 	// called.
@@ -140,6 +145,7 @@ func (s *Stream) Read(pcm []int16) (int, error) {
 	return int(n), nil
 }
 
+// ReadFloat32 is the same as Read, but decodes to float32 instead of int16.
 func (s *Stream) ReadFloat32(pcm []float32) (int, error) {
 	if s.oggfile == nil {
 		return 0, fmt.Errorf("opus stream is uninitialized or already closed")
