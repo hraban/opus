@@ -23,7 +23,12 @@ import "C"
 // Stream wraps a io.Reader in a decoding layer. It provides an API similar to
 // io.Reader, but it provides raw PCM data instead of the encoded Opus data.
 //
-// This wraps the libopusfile library.
+// This is not the same as directly decoding the bytes on the io.Reader; opus
+// streams are Ogg Opus audio streams, which package raw Opus data.
+//
+// This wraps libopusfile. For more information, see the api docs on xiph.org:
+//
+// https://www.opus-codec.org/docs/opusfile_api-0.7/index.html
 type Stream struct {
 	id      uintptr
 	oggfile *C.OggOpusFile
