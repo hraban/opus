@@ -12,7 +12,7 @@ xiph.org opus libs:
 * decoders
 * stream handlers
 
-### Examples
+### Encoding
 
 To encode raw audio to the Opus format, create an encoder first:
 
@@ -55,6 +55,8 @@ if err != nil {
 data = data[:n] // only the first N bytes are opus data. Just like io.Reader.
 ```
 
+
+### Decoding
 
 To decode opus data to raw PCM format, first create a decoder:
 
