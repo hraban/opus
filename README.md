@@ -79,7 +79,7 @@ Now pass it the opus bytes, and a buffer to store the PCM sound in:
 
 ```go
 var frame_size_ms float32 = ...  // if you don't know, go with 60 ms.
-frame_size := frame_size_ms * sample_rate / 1000
+frame_size := channels * frame_size_ms * sample_rate / 1000
 pcm := make([]byte, int(frame_size))
 n, err := dec.Decode(data, pcm)
 if err != nil {
