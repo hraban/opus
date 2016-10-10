@@ -96,6 +96,8 @@ func (enc *Encoder) Encode(pcm []int16, data []byte) (int, error) {
 	if len(data) == 0 {
 		return 0, fmt.Errorf("opus: no target buffer")
 	}
+	// libopus talks about samples as 1 sample containing multiple channels. So
+	// e.g. 20 samples of 2-channel data is actually 40 raw data points.
 	if len(pcm)%enc.channels != 0 {
 		return 0, fmt.Errorf("opus: input buffer length must be multiple of channels")
 	}

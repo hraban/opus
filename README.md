@@ -38,8 +38,8 @@ var pcm []int16 = ... // obtain your raw PCM data somewhere
 const buffer_size = 1000 // choose any buffer size you like. 1k is plenty.
 
 // Check the frame size. You don't need to do this if you trust your input.
-frame_size := len(pcm)
-frame_size_ms := float32(frame_size) * 1000 / sample_rate
+frame_size := len(pcm) // must be interleaved if stereo
+frame_size_ms := float32(frame_size) / channels * 1000 / sample_rate
 switch frame_size_ms {
 case 2.5, 5, 10, 20, 40, 60:
     // Good.
@@ -62,7 +62,7 @@ the encoding process:
 > impose an upper limit on the instant bitrate, but should not be used as the
 > only bitrate control. Use `OPUS_SET_BITRATE` to control the bitrate.
 
-- https://opus-codec.org/docs/opus_api-1.1.3/group__opus__encoder.html
+-- https://opus-codec.org/docs/opus_api-1.1.3/group__opus__encoder.html
 
 ### Decoding
 
@@ -85,7 +85,16 @@ n, err := dec.Decode(data, pcm)
 if err != nil {
     ...
 }
-pcm = pcm[:n] // only necessary if you didn't know the right frame size
+
+// To get all samples (interleaved if multiple channels):
+pcm = pcm[:n*channels] // only necessary if you didn't know the right frame size
+
+// or access directly:
+for i := 0; i < n; i++ {
+    ch1 := pcm[i*channels+0]
+    // if stereo:
+    ch2 := pcm[i*channels+1]
+}
 ```
 
 For more examples, see the `_test.go` files.
