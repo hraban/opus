@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math"
 	"os"
 	"reflect"
 	"strings"
@@ -85,23 +84,6 @@ func extractWavPcm(t *testing.T, fname string) []int16 {
 		samples[i] += int16(bytes[wavHeaderSize+i*2+1]) << 8
 	}
 	return samples
-}
-
-func maxDiff(a []int16, b []int16) int32 {
-	if len(a) != len(b) {
-		return math.MaxInt16
-	}
-	var max int32 = 0
-	for i := range a {
-		d := int32(a[i]) - int32(b[i])
-		if d < 0 {
-			d = -d
-		}
-		if d > max {
-			max = d
-		}
-	}
-	return max
 }
 
 func TestStream(t *testing.T) {

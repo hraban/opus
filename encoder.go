@@ -41,7 +41,8 @@ var errEncUninitialized = fmt.Errorf("opus encoder uninitialized")
 
 // Encoder contains the state of an Opus encoder for libopus.
 type Encoder struct {
-	p *C.struct_OpusEncoder
+	p        *C.struct_OpusEncoder
+	channels int
 	// Memory for the encoder struct allocated on the Go heap to allow Go GC to
 	// manage it (and obviate need to free())
 	mem []byte
@@ -69,6 +70,7 @@ func (enc *Encoder) Init(sample_rate int, channels int, application Application)
 		return fmt.Errorf("Number of channels must be 1 or 2: %d", channels)
 	}
 	size := C.opus_encoder_get_size(C.int(channels))
+	enc.channels = channels
 	enc.mem = make([]byte, size)
 	enc.p = (*C.OpusEncoder)(unsafe.Pointer(&enc.mem[0]))
 	errno := int(C.opus_encoder_init(
@@ -94,10 +96,14 @@ func (enc *Encoder) Encode(pcm []int16, data []byte) (int, error) {
 	if len(data) == 0 {
 		return 0, fmt.Errorf("opus: no target buffer")
 	}
+	if len(pcm)%enc.channels != 0 {
+		return 0, fmt.Errorf("opus: input buffer length must be multiple of channels")
+	}
+	samples := len(pcm) / enc.channels
 	n := int(C.opus_encode(
 		enc.p,
 		(*C.opus_int16)(&pcm[0]),
-		C.int(len(pcm)),
+		C.int(samples),
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {
@@ -118,10 +124,14 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 	if len(data) == 0 {
 		return 0, fmt.Errorf("opus: no target buffer")
 	}
+	if len(pcm)%enc.channels != 0 {
+		return 0, fmt.Errorf("opus: input buffer length must be multiple of channels")
+	}
+	samples := len(pcm) / enc.channels
 	n := int(C.opus_encode_float(
 		enc.p,
 		(*C.float)(&pcm[0]),
-		C.int(len(pcm)),
+		C.int(samples),
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {

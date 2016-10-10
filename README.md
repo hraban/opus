@@ -55,6 +55,14 @@ if err != nil {
 data = data[:n] // only the first N bytes are opus data. Just like io.Reader.
 ```
 
+Note that you must choose a target buffer size, and this buffer size will affect
+the encoding process:
+
+> Size of the allocated memory for the output payload. This may be used to
+> impose an upper limit on the instant bitrate, but should not be used as the
+> only bitrate control. Use `OPUS_SET_BITRATE` to control the bitrate.
+
+- https://opus-codec.org/docs/opus_api-1.1.3/group__opus__encoder.html
 
 ### Decoding
 
