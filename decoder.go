@@ -51,7 +51,7 @@ func (dec *Decoder) Init(sample_rate int, channels int) error {
 		C.opus_int32(sample_rate),
 		C.int(channels))
 	if errno != 0 {
-		return opuserr(int(errno))
+		return opusError(errno)
 	}
 	return nil
 }
@@ -76,7 +76,7 @@ func (dec *Decoder) Decode(data []byte, pcm []int16) (int, error) {
 		C.int(cap(pcm)),
 		0))
 	if n < 0 {
-		return 0, opuserr(n)
+		return 0, opusError(n)
 	}
 	return n, nil
 }
@@ -101,7 +101,7 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 		C.int(cap(pcm)),
 		0))
 	if n < 0 {
-		return 0, opuserr(n)
+		return 0, opusError(n)
 	}
 	return n, nil
 }

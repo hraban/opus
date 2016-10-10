@@ -62,13 +62,13 @@ func TestDecoderUnitialized(t *testing.T) {
 	}
 }
 
-func TestOpuserr(t *testing.T) {
+func TestOpusErrstr(t *testing.T) {
 	// I scooped this -1 up from opus_defines.h, it's OPUS_BAD_ARG. Not pretty,
 	// but it's better than not testing at all. Again, accessing #defines from
 	// CGO is not possible.
-	err := opuserr(-1)
-	if err.Error() != "opus: invalid argument" {
-		t.Errorf("Expected \"invalid argument\" error message for error code -1: %v")
+	if ERR_OPUS_BAD_ARG.Error() != "opus: invalid argument" {
+		t.Errorf("Expected \"invalid argument\" error message for error code %d: %v",
+			ERR_OPUS_BAD_ARG, ERR_OPUS_BAD_ARG)
 	}
 }
 

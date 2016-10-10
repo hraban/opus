@@ -14,6 +14,18 @@ import (
 #include <opusfile.h>
 
 // Access the preprocessor from CGO
+
+// Errors for libopus
+const int CONST_OPUS_OK = OPUS_OK;
+const int CONST_OPUS_BAD_ARG = OPUS_BAD_ARG;
+const int CONST_OPUS_BUFFER_TOO_SMALL = OPUS_BUFFER_TOO_SMALL;
+const int CONST_OPUS_INTERNAL_ERROR = OPUS_INTERNAL_ERROR;
+const int CONST_OPUS_INVALID_PACKET = OPUS_INVALID_PACKET;
+const int CONST_OPUS_UNIMPLEMENTED = OPUS_UNIMPLEMENTED;
+const int CONST_OPUS_INVALID_STATE = OPUS_INVALID_STATE;
+const int CONST_OPUS_ALLOC_FAIL = OPUS_ALLOC_FAIL;
+
+// Errors for libopusfile
 const int CONST_OP_FALSE = OP_FALSE;
 const int CONST_OP_EOF = OP_EOF;
 const int CONST_OP_HOLE = OP_HOLE;
@@ -32,8 +44,33 @@ const int CONST_OP_EBADTIMESTAMP = OP_EBADTIMESTAMP;
 */
 import "C"
 
+type opusError int
+
+var _ error = opusError(0)
+
+// Libopus errors
+var (
+	ERR_OPUS_OK               = opusError(C.CONST_OPUS_OK)
+	ERR_OPUS_BAD_ARG          = opusError(C.CONST_OPUS_BAD_ARG)
+	ERR_OPUS_BUFFER_TOO_SMALL = opusError(C.CONST_OPUS_BUFFER_TOO_SMALL)
+	ERR_OPUS_INTERNAL_ERROR   = opusError(C.CONST_OPUS_INTERNAL_ERROR)
+	ERR_OPUS_INVALID_PACKET   = opusError(C.CONST_OPUS_INVALID_PACKET)
+	ERR_OPUS_UNIMPLEMENTED    = opusError(C.CONST_OPUS_UNIMPLEMENTED)
+	ERR_OPUS_INVALID_STATE    = opusError(C.CONST_OPUS_INVALID_STATE)
+	ERR_OPUS_ALLOC_FAIL       = opusError(C.CONST_OPUS_ALLOC_FAIL)
+)
+
+// Error string (in human readable format) for libopus errors.
+func (e opusError) Error() string {
+	return fmt.Sprintf("opus: %s", C.GoString(C.opus_strerror(C.int(e))))
+}
+
 type opusFileError int
 
+var _ error = opusFileError(0)
+
+// Libopusfile errors. The names are copied verbatim from the libopusfile
+// library.
 var (
 	ERR_OP_FALSE         = opusFileError(C.CONST_OP_FALSE)
 	ERR_OP_EOF           = opusFileError(C.CONST_OP_EOF)
@@ -85,12 +122,6 @@ func (i opusFileError) Error() string {
 	case ERR_OP_EBADTIMESTAMP:
 		return "OP_EBADTIMESTAMP"
 	default:
-		return "libopus error: %d (unknown code)"
+		return "libopusfile error: %d (unknown code)"
 	}
-}
-
-// opuserr translates libopus (not libopusfile) error codes to human readable
-// strings
-func opuserr(code int) error {
-	return fmt.Errorf("opus: %s", C.GoString(C.opus_strerror(C.int(code))))
 }
