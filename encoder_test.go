@@ -6,6 +6,29 @@ package opus
 
 import "testing"
 
+func TestEncoderNew(t *testing.T) {
+	enc, err := NewEncoder(48000, 1, APPLICATION_VOIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	enc, err = NewEncoder(12345, 1, APPLICATION_VOIP)
+	if err == nil || enc != nil {
+		t.Errorf("Expected error for illegal samplerate 12345")
+	}
+}
+
+func TestEncoderUnitialized(t *testing.T) {
+	var enc Encoder
+	_, err := enc.Encode(nil, nil)
+	if err != errEncUninitialized {
+		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
+	}
+	_, err = enc.EncodeFloat32(nil, nil)
+	if err != errEncUninitialized {
+		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
+	}
+}
+
 func TestEncoderDTX(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, APPLICATION_VOIP)
 	if err != nil || enc == nil {

@@ -5,7 +5,6 @@
 package opus
 
 import (
-	"math"
 	"strings"
 	"testing"
 )
@@ -16,52 +15,6 @@ func TestVersion(t *testing.T) {
 	}
 }
 
-func TestEncoderNew(t *testing.T) {
-	enc, err := NewEncoder(48000, 1, APPLICATION_VOIP)
-	if err != nil || enc == nil {
-		t.Errorf("Error creating new encoder: %v", err)
-	}
-	enc, err = NewEncoder(12345, 1, APPLICATION_VOIP)
-	if err == nil || enc != nil {
-		t.Errorf("Expected error for illegal samplerate 12345")
-	}
-}
-
-func TestDecoderNew(t *testing.T) {
-	dec, err := NewDecoder(48000, 1)
-	if err != nil || dec == nil {
-		t.Errorf("Error creating new decoder: %v", err)
-	}
-	dec, err = NewDecoder(12345, 1)
-	if err == nil || dec != nil {
-		t.Errorf("Expected error for illegal samplerate 12345")
-	}
-}
-
-func TestEncoderUnitialized(t *testing.T) {
-	var enc Encoder
-	_, err := enc.Encode(nil, nil)
-	if err != errEncUninitialized {
-		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
-	}
-	_, err = enc.EncodeFloat32(nil, nil)
-	if err != errEncUninitialized {
-		t.Errorf("Expected \"unitialized encoder\" error: %v", err)
-	}
-}
-
-func TestDecoderUnitialized(t *testing.T) {
-	var dec Decoder
-	_, err := dec.Decode(nil, nil)
-	if err != errDecUninitialized {
-		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
-	}
-	_, err = dec.DecodeFloat32(nil, nil)
-	if err != errDecUninitialized {
-		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
-	}
-}
-
 func TestOpusErrstr(t *testing.T) {
 	// I scooped this -1 up from opus_defines.h, it's OPUS_BAD_ARG. Not pretty,
 	// but it's better than not testing at all. Again, accessing #defines from
@@ -69,20 +22,6 @@ func TestOpusErrstr(t *testing.T) {
 	if ERR_OPUS_BAD_ARG.Error() != "opus: invalid argument" {
 		t.Errorf("Expected \"invalid argument\" error message for error code %d: %v",
 			ERR_OPUS_BAD_ARG, ERR_OPUS_BAD_ARG)
-	}
-}
-
-func addSineFloat32(buf []float32, sampleRate int, freq float64) {
-	factor := 2 * math.Pi * freq / float64(sampleRate)
-	for i := range buf {
-		buf[i] += float32(math.Sin(float64(i) * factor))
-	}
-}
-
-func addSine(buf []int16, sampleRate int, freq float64) {
-	factor := 2 * math.Pi * freq / float64(sampleRate)
-	for i := range buf {
-		buf[i] += int16(math.Sin(float64(i)*factor) * math.MaxInt16)
 	}
 }
 
