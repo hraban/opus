@@ -97,7 +97,13 @@ for i := 0; i < n; i++ {
 }
 ```
 
-For more examples, see the `_test.go` files.
+### Vorbis (streams and files)
+
+To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
+(which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
+io.Reader providing the raw stream bytes and returns the decoded Opus data.
+
+See https://godoc.org/github.com/hraban/opus#Stream for further info.
 
 ### API Docs
 
@@ -106,6 +112,8 @@ https://godoc.org/github.com/hraban/opus
 
 Full libopus C API reference:
 https://www.opus-codec.org/docs/opus_api-1.1.3/
+
+For more examples, see the `_test.go` files.
 
 ## Build & installation
 
