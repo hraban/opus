@@ -1,3 +1,5 @@
+[![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
+
 ## opus, by xiph.org
 
 This package provides Go bindings for the C library libopus and libopusfile (by
