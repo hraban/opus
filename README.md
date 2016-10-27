@@ -99,7 +99,7 @@ for i := 0; i < n; i++ {
 }
 ```
 
-### Vorbis (streams and files)
+### Streams (and files)
 
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
