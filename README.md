@@ -1,9 +1,12 @@
 [![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
 
-## opus, by xiph.org
+## Go wrapper for Opus
 
-This package provides Go bindings for the C library libopus and libopusfile (by
-xiph.org).
+This package provides Go bindings for the xiph.org C libraries libopus and
+libopusfile.
+
+The C libraries and docs are hosted at https://opus-codec.org/. This package
+just handles the wrapping in Go, and is unaffiliated with xiph.org.
 
 ## Details
 
