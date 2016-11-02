@@ -6,7 +6,7 @@ package opus
 
 /*
 // Link opus using pkg-config.
-#cgo pkg-config: --static opus
+#cgo pkg-config: opus
 #include <opus/opus.h>
 
 // Access the preprocessor from CGO
