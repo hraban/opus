@@ -146,10 +146,10 @@ libraries available on their system. E.g. if you use this wrapper to write a
 music app in Go, everyone using that music app will need libopus and libopusfile
 on their system.
 
-The obvious way to do this is to publish your software through a package manager
-and specify libopus and libopusfile as dependencies of your program. If that is
-not an option, you can compile the dynamic libraries yourself and ship them with
-your software as seperate (.dll or .so) files.
+The "cleanest" way to do this is to publish your software through a package
+manager and specify libopus and libopusfile as dependencies of your program. If
+that is not an option, you can compile the dynamic libraries yourself and ship
+them with your software as seperate (.dll or .so) files.
 
 On Linux, for example, you would need the libopus.so.0 and libopusfile.so.0
 files in the same directory as the binary. Set your ELF binary's rpath to
@@ -165,7 +165,7 @@ files from its own directory.
 Wrap it all in a .zip, and ship.
 
 I know there is a similar trick for Mac (involving prefixing the shared library
-names with `./`, which is, arguably, better), and Windows... probably just picks
+names with `./`, which is, arguably, better). And Windows... probably just picks
 up .dll files from the same dir by default? I don't know. But there are ways.
 
 ## License
