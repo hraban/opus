@@ -138,6 +138,35 @@ Mac:
 brew install pkg-config opus opusfile
 ```
 
+### Using in Docker
+
+If your Dockerized app has this library as a dependency (directly or
+indirectly), it will need to install the aforementioned packages, too.
+
+This means you can't use the standard `golang:*-onbuild` images, because those
+will try to build the app from source before allowing you to install extra
+dependencies. Instead, try this as a Dockerfile:
+
+```Dockerfile
+# Choose any golang image, just make sure it doesn't have -onbuild
+FROM golang:1
+
+RUN apt-get update && apt-get -y install libopus-dev libopusfile-dev
+
+# Everything below is copied manually from the official -onbuild image,
+# with the ONBUILD keywords removed.
+
+RUN mkdir -p /go/src/app
+WORKDIR /go/src/app
+
+CMD ["go-wrapper", "run"]
+COPY . /go/src/app
+RUN go-wrapper download
+RUN go-wrapper install
+```
+
+For more information, see <https://hub.docker.com/_/golang/>.
+
 ### Linking libopus and libopusfile
 
 The opus and opusfile libraries will be linked into your application
