@@ -111,7 +111,7 @@ func (s *Stream) Init(read io.Reader) error {
 		0,
 		&errno)
 	if errno != 0 {
-		return opusFileError(errno)
+		return StreamError(errno)
 	}
 	s.oggfile = oggfile
 	return nil
@@ -142,7 +142,7 @@ func (s *Stream) Read(pcm []int16) (int, error) {
 		C.int(len(pcm)),
 		nil)
 	if n < 0 {
-		return 0, opusFileError(n)
+		return 0, StreamError(n)
 	}
 	if n == 0 {
 		return 0, io.EOF
@@ -166,7 +166,7 @@ func (s *Stream) ReadFloat32(pcm []float32) (int, error) {
 		C.int(len(pcm)),
 		nil)
 	if n < 0 {
-		return 0, opusFileError(n)
+		return 0, StreamError(n)
 	}
 	if n == 0 {
 		return 0, io.EOF

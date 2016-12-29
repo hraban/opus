@@ -79,7 +79,7 @@ func (enc *Encoder) Init(sample_rate int, channels int, application Application)
 		C.int(channels),
 		C.int(application)))
 	if errno != 0 {
-		return opusError(int(errno))
+		return Error(int(errno))
 	}
 	return nil
 }
@@ -109,7 +109,7 @@ func (enc *Encoder) Encode(pcm []int16, data []byte) (int, error) {
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {
-		return 0, opusError(n)
+		return 0, Error(n)
 	}
 	return n, nil
 }
@@ -137,7 +137,7 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 		(*C.uchar)(&data[0]),
 		C.opus_int32(cap(data))))
 	if n < 0 {
-		return 0, opusError(n)
+		return 0, Error(n)
 	}
 	return n, nil
 }
