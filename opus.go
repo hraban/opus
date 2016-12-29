@@ -31,11 +31,11 @@ var (
 
 // DEPRECATED -- Don't use these. Will be removed end of 2017.
 var (
-	// Optimize encoding for VOIP
+	// DEPRECATED - DON'T USE - Use the camel cased version
 	APPLICATION_VOIP = Application(C.CONST_APPLICATION_VOIP)
-	// Optimize encoding for non-voice signals like music
+	// DEPRECATED - DON'T USE - Use the camel cased version
 	APPLICATION_AUDIO = Application(C.CONST_APPLICATION_AUDIO)
-	// Optimize encoding for low latency applications
+	// DEPRECATED - DON'T USE - Use the camel cased version
 	APPLICATION_RESTRICTED_LOWDELAY = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
