@@ -60,8 +60,8 @@ var (
 	ErrAllocFail      = Error(C.CONST_OPUS_ALLOC_FAIL)
 )
 
-// DEPRECATED versions of the above variables. Will be removed next year. Please
-// don't use.
+// DEPRECATED versions of the above variables. Will be removed end of 2017.
+// Please don't use.
 var (
 	ERR_OPUS_OK               = Error(C.CONST_OPUS_OK)
 	ERR_OPUS_BAD_ARG          = Error(C.CONST_OPUS_BAD_ARG)
@@ -102,8 +102,8 @@ var (
 	ErrStreamBadTimestamp = StreamError(C.CONST_OP_EBADTIMESTAMP)
 )
 
-// DEPRECATED versions of the above variables. Will be removed next year. Please
-// don't use.
+// DEPRECATED versions of the above variables. Will be removed end of 2017.
+// Please don't use.
 var (
 	ERR_OP_FALSE         = StreamError(C.CONST_OP_FALSE)
 	ERR_OP_EOF           = StreamError(C.CONST_OP_EOF)
