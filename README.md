@@ -173,7 +173,8 @@ The opus and opusfile libraries will be linked into your application
 dynamically. This means everyone who uses the resulting binary will need those
 libraries available on their system. E.g. if you use this wrapper to write a
 music app in Go, everyone using that music app will need libopus and libopusfile
-on their system.
+on their system. On Debian systems the packages are called `libopus0` and
+`libopusfile0`.
 
 The "cleanest" way to do this is to publish your software through a package
 manager and specify libopus and libopusfile as dependencies of your program. If
