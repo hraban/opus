@@ -34,6 +34,56 @@ bridge_encoder_get_sample_rate(OpusEncoder *st)
 	opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(&sample_rate));
 	return sample_rate;
 }
+
+opus_int32
+set_bitrate(OpusEncoder *st, opus_int32 bitrate)
+{
+	opus_int32 res;
+	res = opus_encoder_ctl(st, OPUS_SET_BITRATE(bitrate));
+	return res;
+}
+
+opus_int32
+get_bitrate(OpusEncoder *st, opus_int32 *bitrate)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_BITRATE(bitrate));
+	return res;
+}
+
+opus_int32
+set_complexity(OpusEncoder *st, opus_int32 complexity)
+{
+	opus_int32 res;
+	res = opus_encoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
+	return res;
+}
+
+opus_int32
+get_complexity(OpusEncoder *st, opus_int32 *complexity)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_COMPLEXITY(complexity));
+	return res;
+}
+
+opus_int32
+set_max_bandwidth(OpusEncoder *st, opus_int32 max_bw)
+{
+	opus_int32 res;
+	res = opus_encoder_ctl(st, OPUS_SET_MAX_BANDWIDTH(max_bw));
+	return res;
+}
+
+opus_int32
+get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
+	return res;
+}
+
+
 */
 import "C"
 
@@ -50,7 +100,7 @@ type Encoder struct {
 
 // NewEncoder allocates a new Opus encoder and initializes it with the
 // appropriate parameters. All related memory is managed by the Go GC.
-func NewEncoder(sample_rate int, channels int, application Application) (*Encoder, error) {
+func NewEncoder(sample_rate int, channels int, application C.opus_int32) (*Encoder, error) {
 	var enc Encoder
 	err := enc.Init(sample_rate, channels, application)
 	if err != nil {
@@ -62,7 +112,7 @@ func NewEncoder(sample_rate int, channels int, application Application) (*Encode
 // Init initializes a pre-allocated opus encoder. Unless the encoder has been
 // created using NewEncoder, this method must be called exactly once in the
 // life-time of this object, before calling any other methods.
-func (enc *Encoder) Init(sample_rate int, channels int, application Application) error {
+func (enc *Encoder) Init(sample_rate int, channels int, application C.opus_int32) error {
 	if enc.p != nil {
 		return fmt.Errorf("opus encoder already initialized")
 	}
@@ -161,4 +211,62 @@ func (enc *Encoder) DTX() bool {
 // SampleRate returns the encoder sample rate in Hz.
 func (enc *Encoder) SampleRate() int {
 	return int(C.bridge_encoder_get_sample_rate(enc.p))
+}
+
+// SetBitrate sets the bitrate of the Encoder
+func (enc *Encoder) SetBitrate(bitrate int) error {
+	res := int(C.set_bitrate(enc.p, C.opus_int32(bitrate)))
+	if res < 0 {
+		return opusError(res)
+	}
+	return nil
+}
+
+// Bitrate returns the bitrate of the Encoder
+func (enc *Encoder) Bitrate() (int, error) {
+	var bitrate C.opus_int32
+	res := int(C.get_bitrate(enc.p, &bitrate))
+	if res < 0 {
+		return 0, opusError(res)
+	}
+	return int(bitrate), nil
+}
+
+// SetComplexity sets the encoder's computational complexity
+func (enc *Encoder) SetComplexity(complexity int) error {
+	res := int(C.set_complexity(enc.p, C.opus_int32(complexity)))
+	if res < 0 {
+		return opusError(res)
+	}
+	return nil
+}
+
+// Complexity returns the bitrate of the Encoder
+func (enc *Encoder) Complexity() (int, error) {
+	var complexity C.opus_int32
+	res := int(C.get_complexity(enc.p, &complexity))
+	if res < 0 {
+		return 0, opusError(res)
+	}
+	return int(complexity), nil
+}
+
+// SetMaxBandwidth configures the maximum bandpass that the encoder will select
+// automatically
+func (enc *Encoder) SetMaxBandwidth(maxBw int) error {
+	res := int(C.set_max_bandwidth(enc.p, C.opus_int32(maxBw)))
+	if res < 0 {
+		return opusError(res)
+	}
+	return nil
+}
+
+// MaxBandwidth gets the encoder's configured maximum allowed bandpass.
+func (enc *Encoder) MaxBandwidth() (int, error) {
+	var maxBw C.opus_int32
+	res := int(C.get_max_bandwidth(enc.p, &maxBw))
+	if res < 0 {
+		return 0, opusError(res)
+	}
+	return int(maxBw), nil
 }
