@@ -44,82 +44,115 @@ const int CONST_OP_EBADTIMESTAMP = OP_EBADTIMESTAMP;
 */
 import "C"
 
-type opusError int
+type Error int
 
-var _ error = opusError(0)
+var _ error = Error(0)
 
 // Libopus errors
 var (
-	ERR_OPUS_OK               = opusError(C.CONST_OPUS_OK)
-	ERR_OPUS_BAD_ARG          = opusError(C.CONST_OPUS_BAD_ARG)
-	ERR_OPUS_BUFFER_TOO_SMALL = opusError(C.CONST_OPUS_BUFFER_TOO_SMALL)
-	ERR_OPUS_INTERNAL_ERROR   = opusError(C.CONST_OPUS_INTERNAL_ERROR)
-	ERR_OPUS_INVALID_PACKET   = opusError(C.CONST_OPUS_INVALID_PACKET)
-	ERR_OPUS_UNIMPLEMENTED    = opusError(C.CONST_OPUS_UNIMPLEMENTED)
-	ERR_OPUS_INVALID_STATE    = opusError(C.CONST_OPUS_INVALID_STATE)
-	ERR_OPUS_ALLOC_FAIL       = opusError(C.CONST_OPUS_ALLOC_FAIL)
+	ErrOK             = Error(C.CONST_OPUS_OK)
+	ErrBadArg         = Error(C.CONST_OPUS_BAD_ARG)
+	ErrBufferTooSmall = Error(C.CONST_OPUS_BUFFER_TOO_SMALL)
+	ErrInternalError  = Error(C.CONST_OPUS_INTERNAL_ERROR)
+	ErrInvalidPacket  = Error(C.CONST_OPUS_INVALID_PACKET)
+	ErrUnimplemented  = Error(C.CONST_OPUS_UNIMPLEMENTED)
+	ErrInvalidState   = Error(C.CONST_OPUS_INVALID_STATE)
+	ErrAllocFail      = Error(C.CONST_OPUS_ALLOC_FAIL)
+)
+
+// DEPRECATED versions of the above variables. Will be removed next year. Please
+// don't use.
+var (
+	ERR_OPUS_OK               = Error(C.CONST_OPUS_OK)
+	ERR_OPUS_BAD_ARG          = Error(C.CONST_OPUS_BAD_ARG)
+	ERR_OPUS_BUFFER_TOO_SMALL = Error(C.CONST_OPUS_BUFFER_TOO_SMALL)
+	ERR_OPUS_INTERNAL_ERROR   = Error(C.CONST_OPUS_INTERNAL_ERROR)
+	ERR_OPUS_INVALID_PACKET   = Error(C.CONST_OPUS_INVALID_PACKET)
+	ERR_OPUS_UNIMPLEMENTED    = Error(C.CONST_OPUS_UNIMPLEMENTED)
+	ERR_OPUS_INVALID_STATE    = Error(C.CONST_OPUS_INVALID_STATE)
+	ERR_OPUS_ALLOC_FAIL       = Error(C.CONST_OPUS_ALLOC_FAIL)
 )
 
 // Error string (in human readable format) for libopus errors.
-func (e opusError) Error() string {
+func (e Error) Error() string {
 	return fmt.Sprintf("opus: %s", C.GoString(C.opus_strerror(C.int(e))))
 }
 
-type opusFileError int
+type StreamError int
 
-var _ error = opusFileError(0)
+var _ error = StreamError(0)
 
 // Libopusfile errors. The names are copied verbatim from the libopusfile
 // library.
 var (
-	ERR_OP_FALSE         = opusFileError(C.CONST_OP_FALSE)
-	ERR_OP_EOF           = opusFileError(C.CONST_OP_EOF)
-	ERR_OP_HOLE          = opusFileError(C.CONST_OP_HOLE)
-	ERR_OP_EREAD         = opusFileError(C.CONST_OP_EREAD)
-	ERR_OP_EFAULT        = opusFileError(C.CONST_OP_EFAULT)
-	ERR_OP_EIMPL         = opusFileError(C.CONST_OP_EIMPL)
-	ERR_OP_EINVAL        = opusFileError(C.CONST_OP_EINVAL)
-	ERR_OP_ENOTFORMAT    = opusFileError(C.CONST_OP_ENOTFORMAT)
-	ERR_OP_EBADHEADER    = opusFileError(C.CONST_OP_EBADHEADER)
-	ERR_OP_EVERSION      = opusFileError(C.CONST_OP_EVERSION)
-	ERR_OP_ENOTAUDIO     = opusFileError(C.CONST_OP_ENOTAUDIO)
-	ERR_OP_EBADPACKET    = opusFileError(C.CONST_OP_EBADPACKET)
-	ERR_OP_EBADLINK      = opusFileError(C.CONST_OP_EBADLINK)
-	ERR_OP_ENOSEEK       = opusFileError(C.CONST_OP_ENOSEEK)
-	ERR_OP_EBADTIMESTAMP = opusFileError(C.CONST_OP_EBADTIMESTAMP)
+	ErrStreamFalse        = StreamError(C.CONST_OP_FALSE)
+	ErrStreamEOF          = StreamError(C.CONST_OP_EOF)
+	ErrStreamHole         = StreamError(C.CONST_OP_HOLE)
+	ErrStreamRead         = StreamError(C.CONST_OP_EREAD)
+	ErrStreamFault        = StreamError(C.CONST_OP_EFAULT)
+	ErrStreamImpl         = StreamError(C.CONST_OP_EIMPL)
+	ErrStreamInval        = StreamError(C.CONST_OP_EINVAL)
+	ErrStreamNotFormat    = StreamError(C.CONST_OP_ENOTFORMAT)
+	ErrStreamBadHeader    = StreamError(C.CONST_OP_EBADHEADER)
+	ErrStreamVersion      = StreamError(C.CONST_OP_EVERSION)
+	ErrStreamNotAudio     = StreamError(C.CONST_OP_ENOTAUDIO)
+	ErrStreamBadPacked    = StreamError(C.CONST_OP_EBADPACKET)
+	ErrStreamBadLink      = StreamError(C.CONST_OP_EBADLINK)
+	ErrStreamNoSeek       = StreamError(C.CONST_OP_ENOSEEK)
+	ErrStreamBadTimestamp = StreamError(C.CONST_OP_EBADTIMESTAMP)
 )
 
-func (i opusFileError) Error() string {
+// DEPRECATED versions of the above variables. Will be removed next year. Please
+// don't use.
+var (
+	ERR_OP_FALSE         = StreamError(C.CONST_OP_FALSE)
+	ERR_OP_EOF           = StreamError(C.CONST_OP_EOF)
+	ERR_OP_HOLE          = StreamError(C.CONST_OP_HOLE)
+	ERR_OP_EREAD         = StreamError(C.CONST_OP_EREAD)
+	ERR_OP_EFAULT        = StreamError(C.CONST_OP_EFAULT)
+	ERR_OP_EIMPL         = StreamError(C.CONST_OP_EIMPL)
+	ERR_OP_EINVAL        = StreamError(C.CONST_OP_EINVAL)
+	ERR_OP_ENOTFORMAT    = StreamError(C.CONST_OP_ENOTFORMAT)
+	ERR_OP_EBADHEADER    = StreamError(C.CONST_OP_EBADHEADER)
+	ERR_OP_EVERSION      = StreamError(C.CONST_OP_EVERSION)
+	ERR_OP_ENOTAUDIO     = StreamError(C.CONST_OP_ENOTAUDIO)
+	ERR_OP_EBADPACKET    = StreamError(C.CONST_OP_EBADPACKET)
+	ERR_OP_EBADLINK      = StreamError(C.CONST_OP_EBADLINK)
+	ERR_OP_ENOSEEK       = StreamError(C.CONST_OP_ENOSEEK)
+	ERR_OP_EBADTIMESTAMP = StreamError(C.CONST_OP_EBADTIMESTAMP)
+)
+
+func (i StreamError) Error() string {
 	switch i {
-	case ERR_OP_FALSE:
+	case ErrStreamFalse:
 		return "OP_FALSE"
-	case ERR_OP_EOF:
+	case ErrStreamEOF:
 		return "OP_EOF"
-	case ERR_OP_HOLE:
+	case ErrStreamHole:
 		return "OP_HOLE"
-	case ERR_OP_EREAD:
+	case ErrStreamRead:
 		return "OP_EREAD"
-	case ERR_OP_EFAULT:
+	case ErrStreamFault:
 		return "OP_EFAULT"
-	case ERR_OP_EIMPL:
+	case ErrStreamImpl:
 		return "OP_EIMPL"
-	case ERR_OP_EINVAL:
+	case ErrStreamInval:
 		return "OP_EINVAL"
-	case ERR_OP_ENOTFORMAT:
+	case ErrStreamNotFormat:
 		return "OP_ENOTFORMAT"
-	case ERR_OP_EBADHEADER:
+	case ErrStreamBadHeader:
 		return "OP_EBADHEADER"
-	case ERR_OP_EVERSION:
+	case ErrStreamVersion:
 		return "OP_EVERSION"
-	case ERR_OP_ENOTAUDIO:
+	case ErrStreamNotAudio:
 		return "OP_ENOTAUDIO"
-	case ERR_OP_EBADPACKET:
+	case ErrStreamBadPacked:
 		return "OP_EBADPACKET"
-	case ERR_OP_EBADLINK:
+	case ErrStreamBadLink:
 		return "OP_EBADLINK"
-	case ERR_OP_ENOSEEK:
+	case ErrStreamNoSeek:
 		return "OP_ENOSEEK"
-	case ERR_OP_EBADTIMESTAMP:
+	case ErrStreamBadTimestamp:
 		return "OP_EBADTIMESTAMP"
 	default:
 		return "libopusfile error: %d (unknown code)"
