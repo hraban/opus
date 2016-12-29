@@ -7,11 +7,11 @@ package opus
 import "testing"
 
 func TestEncoderNew(t *testing.T) {
-	enc, err := NewEncoder(48000, 1, APPLICATION_VOIP)
+	enc, err := NewEncoder(48000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
-	enc, err = NewEncoder(12345, 1, APPLICATION_VOIP)
+	enc, err = NewEncoder(12345, 1, AppVoIP)
 	if err == nil || enc != nil {
 		t.Errorf("Expected error for illegal samplerate 12345")
 	}
@@ -30,7 +30,7 @@ func TestEncoderUnitialized(t *testing.T) {
 }
 
 func TestEncoderDTX(t *testing.T) {
-	enc, err := NewEncoder(8000, 1, APPLICATION_VOIP)
+	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
@@ -47,7 +47,7 @@ func TestEncoderDTX(t *testing.T) {
 func TestEncoderSampleRate(t *testing.T) {
 	sample_rates := []int{8000, 12000, 16000, 24000, 48000}
 	for _, f := range sample_rates {
-		enc, err := NewEncoder(f, 1, APPLICATION_VOIP)
+		enc, err := NewEncoder(f, 1, AppVoIP)
 		if err != nil || enc == nil {
 			t.Fatalf("Error creating new encoder with sample_rate %d Hz: %v", f, err)
 		}

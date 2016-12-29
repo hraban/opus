@@ -32,7 +32,7 @@ func TestCodec(t *testing.T) {
 	const FRAME_SIZE_MS = 60
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
 	pcm := make([]int16, FRAME_SIZE)
-	enc, err := NewEncoder(SAMPLE_RATE, 1, APPLICATION_VOIP)
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
@@ -66,7 +66,7 @@ func TestCodecFloat32(t *testing.T) {
 	const FRAME_SIZE_MS = 60
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
 	pcm := make([]float32, FRAME_SIZE)
-	enc, err := NewEncoder(SAMPLE_RATE, 1, APPLICATION_VOIP)
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
@@ -100,7 +100,7 @@ func TestStereo(t *testing.T) {
 	const CHANNELS = 2
 	const FRAME_SIZE_MONO = SAMPLE_RATE * FRAME_SIZE_MS / 1000
 
-	enc, err := NewEncoder(SAMPLE_RATE, CHANNELS, APPLICATION_VOIP)
+	enc, err := NewEncoder(SAMPLE_RATE, CHANNELS, AppVoIP)
 	if err != nil || enc == nil {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
