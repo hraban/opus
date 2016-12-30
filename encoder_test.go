@@ -57,3 +57,118 @@ func TestEncoderSampleRate(t *testing.T) {
 		}
 	}
 }
+
+func TestEncoder_SetGetBitrate(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []int{500, 100000, 300000}
+	for _, bitrate := range vals {
+		err := enc.SetBitrate(bitrate)
+		if err != nil {
+			t.Error("Error set bitrate:", err)
+		}
+		br, err := enc.Bitrate()
+		if err != nil {
+			t.Error("Error getting bitrate", err)
+		}
+		if br != bitrate {
+			t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
+		}
+	}
+}
+
+func TestEncoder_SetGetInvalidBitrate(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	invalidVals := []int{-20, 0}
+	for _, bitrate := range invalidVals {
+		err := enc.SetBitrate(bitrate)
+		if err == nil {
+			t.Errorf("Expected Error invalid bitrate: %d", bitrate)
+		}
+		br, err := enc.Bitrate()
+		if err != nil {
+			t.Error("Error getting bitrate", err)
+		}
+		// default bitrate is 32 kbit/s
+		if br != 32000 {
+			t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
+		}
+	}
+}
+
+func TestEncoder_SetGetComplexity(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	for _, complexity := range vals {
+		err := enc.SetComplexity(complexity)
+		if err != nil {
+			t.Error("Error setting complexity value:", err)
+		}
+		cpx, err := enc.Complexity()
+		if err != nil {
+			t.Error("Error getting complexity value", err)
+		}
+		if cpx != complexity {
+			t.Errorf("Unexpected encoder complexity value. Got %d, but expected %d",
+				cpx, complexity)
+		}
+	}
+}
+
+func TestEncoder_SetGetInvalidComplexity(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	invalidVals := []int{-20, 11, 1000}
+	for _, complexity := range invalidVals {
+		err := enc.SetComplexity(complexity)
+		if err == nil {
+			t.Errorf("Expected Error invalid complexity value: %d", complexity)
+		}
+		cpx, err := enc.Complexity()
+		if err != nil {
+			t.Error("Error getting complexity value", err)
+		}
+		// default complexity value is 9
+		if cpx != 9 {
+			t.Errorf("Unexpected complexity value. Got %d, but expected %d",
+				cpx, complexity)
+		}
+	}
+}
+
+func TestEncoder_SetGetMaxBandwidth(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []int{BandwidthNarrowband,
+		BandwidthMediumBand,
+		BandwidthWideBand,
+		BandwidthSuperWideBand,
+		BandwidthFullband,
+	}
+	for _, maxBw := range vals {
+		err := enc.SetMaxBandwidth(maxBw)
+		if err != nil {
+			t.Error("Error setting max Bandwidth:", err)
+		}
+		maxBwRead, err := enc.MaxBandwidth()
+		if err != nil {
+			t.Error("Error getting max Bandwidth", err)
+		}
+		if maxBwRead != maxBw {
+			t.Errorf("Unexpected max Bandwidth value. Got %d, but expected %d",
+				maxBwRead, maxBw)
+		}
+	}
+}

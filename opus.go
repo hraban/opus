@@ -18,15 +18,13 @@ import "C"
 
 type Application int
 
-// These variables should be constants, but for interoperability with CGO
-// they're var. Don't change them, though!
-var (
+const (
 	// Optimize encoding for VoIP
-	AppVoIP = Application(C.CONST_APPLICATION_VOIP)
+	AppVoIP = C.OPUS_APPLICATION_VOIP
 	// Optimize encoding for non-voice signals like music
-	AppAudio = Application(C.CONST_APPLICATION_AUDIO)
+	AppAudio = C.OPUS_APPLICATION_AUDIO
 	// Optimize encoding for low latency applications
-	AppRestrictedLowdelay = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
+	AppRestrictedLowdelay = C.OPUS_APPLICATION_RESTRICTED_LOWDELAY
 )
 
 // DEPRECATED -- Don't use these. Will be removed end of 2017.
