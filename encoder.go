@@ -100,14 +100,14 @@ import "C"
 type Bandwidth int
 
 var (
-	//4 kHz passband
+	// 4 kHz passband
 	Narrowband = Bandwidth(C.OPUS_BANDWIDTH_NARROWBAND)
 	// 6 kHz passband
-	MediumBand = Bandwidth(C.OPUS_BANDWIDTH_MEDIUMBAND)
+	Mediumband = Bandwidth(C.OPUS_BANDWIDTH_MEDIUMBAND)
 	// 8 kHz passband
-	WideBand = Bandwidth(C.OPUS_BANDWIDTH_WIDEBAND)
+	Wideband = Bandwidth(C.OPUS_BANDWIDTH_WIDEBAND)
 	// 12 kHz passband
-	SuperWideBand = Bandwidth(C.OPUS_BANDWIDTH_SUPERWIDEBAND)
+	SuperWideband = Bandwidth(C.OPUS_BANDWIDTH_SUPERWIDEBAND)
 	// 20 kHz passband
 	Fullband = Bandwidth(C.OPUS_BANDWIDTH_FULLBAND)
 )
