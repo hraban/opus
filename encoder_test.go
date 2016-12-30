@@ -36,7 +36,7 @@ func TestEncoderDTX(t *testing.T) {
 	}
 	vals := []bool{true, false}
 	for _, dtx := range vals {
-		err := enc.UseDTX(dtx)
+		err := enc.SetDTX(dtx)
 		if err != nil {
 			t.Fatalf("Error setting DTX to %t: %v", dtx, err)
 		}

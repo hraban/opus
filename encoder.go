@@ -201,13 +201,13 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 	return n, nil
 }
 
-// UseDTX configures the encoder's use of discontinuous transmission (DTX).
-func (enc *Encoder) UseDTX(use bool) error {
-	dtx := 0
-	if use {
-		dtx = 1
+// SetDTX configures the encoder's use of discontinuous transmission (DTX).
+func (enc *Encoder) SetDTX(dtx bool) error {
+	i := 0
+	if dtx {
+		i = 1
 	}
-	res := C.bridge_encoder_set_dtx(enc.p, C.opus_int32(dtx))
+	res := C.bridge_encoder_set_dtx(enc.p, C.opus_int32(i))
 	if res != C.OPUS_OK {
 		return Error(res)
 	}
