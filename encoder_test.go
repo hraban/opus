@@ -134,10 +134,15 @@ func TestEncoder_SetGetInvalidComplexity(t *testing.T) {
 		if err == nil {
 			t.Errorf("Expected Error invalid complexity value: %d", complexity)
 		}
+		if err.Error() != "opus: invalid argument" {
+			t.Error("Unexpected Error message")
+		}
+
 		cpx, err := enc.Complexity()
 		if err != nil {
 			t.Error("Error getting complexity value", err)
 		}
+
 		// default complexity value is 9
 		if cpx != 9 {
 			t.Errorf("Unexpected complexity value. Got %d, but expected %d",
