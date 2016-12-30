@@ -285,7 +285,7 @@ func (enc *Encoder) SetComplexity(complexity int) error {
 	return nil
 }
 
-// Complexity returns the bitrate of the Encoder
+// Complexity returns the computational complexity used by the encoder
 func (enc *Encoder) Complexity() (int, error) {
 	var complexity C.opus_int32
 	res := C.bridge_encoder_get_complexity(enc.p, &complexity)

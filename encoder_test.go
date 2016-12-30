@@ -137,7 +137,7 @@ func TestEncoder_SetBitrateMax(t *testing.T) {
 
 	err = enc.SetBitrateMax()
 	if err != nil {
-		t.Error("Error setting Auto bitrate:", err)
+		t.Error("Error setting Max bitrate:", err)
 	}
 
 	br, err = enc.Bitrate()
