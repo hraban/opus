@@ -228,10 +228,11 @@ func TestEncoder_SetGetMaxBandwidth(t *testing.T) {
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
-	vals := []Bandwidth{Narrowband,
-		MediumBand,
-		WideBand,
-		SuperWideBand,
+	vals := []Bandwidth{
+		Narrowband,
+		Mediumband,
+		Wideband,
+		SuperWideband,
 		Fullband,
 	}
 	for _, maxBw := range vals {
