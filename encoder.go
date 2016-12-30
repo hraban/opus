@@ -31,7 +31,7 @@ opus_int32
 bridge_encoder_get_sample_rate(OpusEncoder *st)
 {
 	opus_int32 sample_rate = 0;
-	opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(&sample_rate));
+	int ret = opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(&sample_rate));
 	return sample_rate;
 }
 
@@ -39,49 +39,37 @@ bridge_encoder_get_sample_rate(OpusEncoder *st)
 int
 bridge_encoder_set_bitrate(OpusEncoder *st, opus_int32 bitrate)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_SET_BITRATE(bitrate));
-	return res;
+	return opus_encoder_ctl(st, OPUS_SET_BITRATE(bitrate));
 }
 
 int
 bridge_encoder_get_bitrate(OpusEncoder *st, opus_int32 *bitrate)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_GET_BITRATE(bitrate));
-	return res;
+	return opus_encoder_ctl(st, OPUS_GET_BITRATE(bitrate));
 }
 
 int
 bridge_encoder_set_complexity(OpusEncoder *st, opus_int32 complexity)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
-	return res;
+	return opus_encoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
 }
 
 int
 bridge_encoder_get_complexity(OpusEncoder *st, opus_int32 *complexity)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_GET_COMPLEXITY(complexity));
-	return res;
+	return opus_encoder_ctl(st, OPUS_GET_COMPLEXITY(complexity));
 }
 
 int
 bridge_encoder_set_max_bandwidth(OpusEncoder *st, opus_int32 max_bw)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_SET_MAX_BANDWIDTH(max_bw));
-	return res;
+	return opus_encoder_ctl(st, OPUS_SET_MAX_BANDWIDTH(max_bw));
 }
 
 int
 bridge_encoder_get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
 {
-	int res;
-	res = opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
-	return res;
+	return opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
 }
 
 // Access the preprocessor from CGO
