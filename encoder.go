@@ -100,7 +100,7 @@ type Encoder struct {
 
 // NewEncoder allocates a new Opus encoder and initializes it with the
 // appropriate parameters. All related memory is managed by the Go GC.
-func NewEncoder(sample_rate int, channels int, application C.opus_int32) (*Encoder, error) {
+func NewEncoder(sample_rate int, channels int, application int) (*Encoder, error) {
 	var enc Encoder
 	err := enc.Init(sample_rate, channels, application)
 	if err != nil {
@@ -112,7 +112,7 @@ func NewEncoder(sample_rate int, channels int, application C.opus_int32) (*Encod
 // Init initializes a pre-allocated opus encoder. Unless the encoder has been
 // created using NewEncoder, this method must be called exactly once in the
 // life-time of this object, before calling any other methods.
-func (enc *Encoder) Init(sample_rate int, channels int, application C.opus_int32) error {
+func (enc *Encoder) Init(sample_rate int, channels int, application int) error {
 	if enc.p != nil {
 		return fmt.Errorf("opus encoder already initialized")
 	}
