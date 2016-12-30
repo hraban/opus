@@ -84,24 +84,32 @@ bridge_encoder_get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
 	return res;
 }
 
+// Access the preprocessor from CGO
+const int CONST_BANDWIDTH_NARROWBAND = OPUS_BANDWIDTH_NARROWBAND;
+const int CONST_BANDWIDTH_MEDIUMBAND = OPUS_BANDWIDTH_MEDIUMBAND;
+const int CONST_BANDWIDTH_WIDEBAND = OPUS_BANDWIDTH_WIDEBAND;
+const int CONST_BANDWIDTH_SUPERWIDEBAND = OPUS_BANDWIDTH_SUPERWIDEBAND;
+const int CONST_BANDWIDTH_FULLBAND = OPUS_BANDWIDTH_FULLBAND;
+
+const int CONST_BITRATE_AUTO = OPUS_AUTO;
+const int CONST_BITRATE_MAX = OPUS_BITRATE_MAX;
+
 */
 import "C"
 
-const (
-	// Auto bitrate
-	Auto = C.OPUS_AUTO
-	// Maximum bitrate
-	BitrateMax = C.OPUS_BITRATE_MAX
+type Bandwidth int
+
+var (
 	//4 kHz passband
-	BandwidthNarrowband = C.OPUS_BANDWIDTH_NARROWBAND
+	Narrowband = Bandwidth(C.OPUS_BANDWIDTH_NARROWBAND)
 	// 6 kHz passband
-	BandwidthMediumBand = C.OPUS_BANDWIDTH_MEDIUMBAND
+	MediumBand = Bandwidth(C.OPUS_BANDWIDTH_MEDIUMBAND)
 	// 8 kHz passband
-	BandwidthWideBand = C.OPUS_BANDWIDTH_WIDEBAND
+	WideBand = Bandwidth(C.OPUS_BANDWIDTH_WIDEBAND)
 	// 12 kHz passband
-	BandwidthSuperWideBand = C.OPUS_BANDWIDTH_SUPERWIDEBAND
+	SuperWideBand = Bandwidth(C.OPUS_BANDWIDTH_SUPERWIDEBAND)
 	// 20 kHz passband
-	BandwidthFullband = C.OPUS_BANDWIDTH_FULLBAND
+	Fullband = Bandwidth(C.OPUS_BANDWIDTH_FULLBAND)
 )
 
 var errEncUninitialized = fmt.Errorf("opus encoder uninitialized")
@@ -117,7 +125,7 @@ type Encoder struct {
 
 // NewEncoder allocates a new Opus encoder and initializes it with the
 // appropriate parameters. All related memory is managed by the Go GC.
-func NewEncoder(sample_rate int, channels int, application int) (*Encoder, error) {
+func NewEncoder(sample_rate int, channels int, application Application) (*Encoder, error) {
 	var enc Encoder
 	err := enc.Init(sample_rate, channels, application)
 	if err != nil {
@@ -129,7 +137,7 @@ func NewEncoder(sample_rate int, channels int, application int) (*Encoder, error
 // Init initializes a pre-allocated opus encoder. Unless the encoder has been
 // created using NewEncoder, this method must be called exactly once in the
 // life-time of this object, before calling any other methods.
-func (enc *Encoder) Init(sample_rate int, channels int, application int) error {
+func (enc *Encoder) Init(sample_rate int, channels int, application Application) error {
 	if enc.p != nil {
 		return fmt.Errorf("opus encoder already initialized")
 	}
@@ -239,6 +247,25 @@ func (enc *Encoder) SetBitrate(bitrate int) error {
 	return nil
 }
 
+// SetBitrateAuto will allow the encoder to automatically set the bitrate
+func (enc *Encoder) SetBitrateAuto() error {
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_AUTO))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// SetBitrateMax causes the encoder to use as much rate as it can. This can be
+// useful for controlling the rate by adjusting the output buffer size.
+func (enc *Encoder) SetBitrateMax() error {
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_MAX))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
 // Bitrate returns the bitrate of the Encoder
 func (enc *Encoder) Bitrate() (int, error) {
 	var bitrate C.opus_int32
@@ -270,7 +297,7 @@ func (enc *Encoder) Complexity() (int, error) {
 
 // SetMaxBandwidth configures the maximum bandpass that the encoder will select
 // automatically
-func (enc *Encoder) SetMaxBandwidth(maxBw int) error {
+func (enc *Encoder) SetMaxBandwidth(maxBw Bandwidth) error {
 	res := C.bridge_encoder_set_max_bandwidth(enc.p, C.opus_int32(maxBw))
 	if res != C.OPUS_OK {
 		return Error(res)
@@ -279,11 +306,11 @@ func (enc *Encoder) SetMaxBandwidth(maxBw int) error {
 }
 
 // MaxBandwidth gets the encoder's configured maximum allowed bandpass.
-func (enc *Encoder) MaxBandwidth() (int, error) {
+func (enc *Encoder) MaxBandwidth() (Bandwidth, error) {
 	var maxBw C.opus_int32
 	res := C.bridge_encoder_get_max_bandwidth(enc.p, &maxBw)
 	if res != C.OPUS_OK {
 		return 0, Error(res)
 	}
-	return int(maxBw), nil
+	return Bandwidth(maxBw), nil
 }

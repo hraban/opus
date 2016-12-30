@@ -79,6 +79,78 @@ func TestEncoder_SetGetBitrate(t *testing.T) {
 	}
 }
 
+func TestEncoder_SetBitrateAuto(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+
+	bitrate := 5000
+	if err := enc.SetBitrate(bitrate); err != nil {
+		t.Error("Error setting bitrate:", err)
+	}
+
+	br, err := enc.Bitrate()
+	if err != nil {
+		t.Error("Error getting bitrate", err)
+	}
+
+	if br != bitrate {
+		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
+	}
+
+	err = enc.SetBitrateAuto()
+	if err != nil {
+		t.Error("Error setting Auto bitrate:", err)
+	}
+
+	br, err = enc.Bitrate()
+	if err != nil {
+		t.Error("Error getting bitrate", err)
+	}
+
+	brDefault := 32000 //default start value
+	if br != brDefault {
+		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, brDefault)
+	}
+}
+
+func TestEncoder_SetBitrateMax(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+
+	bitrate := 5000
+	if err := enc.SetBitrate(bitrate); err != nil {
+		t.Error("Error setting bitrate:", err)
+	}
+
+	br, err := enc.Bitrate()
+	if err != nil {
+		t.Error("Error getting bitrate", err)
+	}
+
+	if br != bitrate {
+		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
+	}
+
+	err = enc.SetBitrateMax()
+	if err != nil {
+		t.Error("Error setting Auto bitrate:", err)
+	}
+
+	br, err = enc.Bitrate()
+	if err != nil {
+		t.Error("Error getting bitrate", err)
+	}
+
+	brMax := 4083200
+	if br != brMax { //default start value
+		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, brMax)
+	}
+}
+
 func TestEncoder_SetGetInvalidBitrate(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
@@ -156,11 +228,11 @@ func TestEncoder_SetGetMaxBandwidth(t *testing.T) {
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
-	vals := []int{BandwidthNarrowband,
-		BandwidthMediumBand,
-		BandwidthWideBand,
-		BandwidthSuperWideBand,
-		BandwidthFullband,
+	vals := []Bandwidth{Narrowband,
+		MediumBand,
+		WideBand,
+		SuperWideBand,
+		Fullband,
 	}
 	for _, maxBw := range vals {
 		err := enc.SetMaxBandwidth(maxBw)
