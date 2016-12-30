@@ -34,8 +34,83 @@ bridge_encoder_get_sample_rate(OpusEncoder *st)
 	opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(&sample_rate));
 	return sample_rate;
 }
+
+
+int
+bridge_encoder_set_bitrate(OpusEncoder *st, opus_int32 bitrate)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_SET_BITRATE(bitrate));
+	return res;
+}
+
+int
+bridge_encoder_get_bitrate(OpusEncoder *st, opus_int32 *bitrate)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_BITRATE(bitrate));
+	return res;
+}
+
+int
+bridge_encoder_set_complexity(OpusEncoder *st, opus_int32 complexity)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
+	return res;
+}
+
+int
+bridge_encoder_get_complexity(OpusEncoder *st, opus_int32 *complexity)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_COMPLEXITY(complexity));
+	return res;
+}
+
+int
+bridge_encoder_set_max_bandwidth(OpusEncoder *st, opus_int32 max_bw)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_SET_MAX_BANDWIDTH(max_bw));
+	return res;
+}
+
+int
+bridge_encoder_get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
+{
+	int res;
+	res = opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
+	return res;
+}
+
+// Access the preprocessor from CGO
+const int CONST_BANDWIDTH_NARROWBAND = OPUS_BANDWIDTH_NARROWBAND;
+const int CONST_BANDWIDTH_MEDIUMBAND = OPUS_BANDWIDTH_MEDIUMBAND;
+const int CONST_BANDWIDTH_WIDEBAND = OPUS_BANDWIDTH_WIDEBAND;
+const int CONST_BANDWIDTH_SUPERWIDEBAND = OPUS_BANDWIDTH_SUPERWIDEBAND;
+const int CONST_BANDWIDTH_FULLBAND = OPUS_BANDWIDTH_FULLBAND;
+
+const int CONST_BITRATE_AUTO = OPUS_AUTO;
+const int CONST_BITRATE_MAX = OPUS_BITRATE_MAX;
+
 */
 import "C"
+
+type Bandwidth int
+
+var (
+	//4 kHz passband
+	Narrowband = Bandwidth(C.OPUS_BANDWIDTH_NARROWBAND)
+	// 6 kHz passband
+	MediumBand = Bandwidth(C.OPUS_BANDWIDTH_MEDIUMBAND)
+	// 8 kHz passband
+	WideBand = Bandwidth(C.OPUS_BANDWIDTH_WIDEBAND)
+	// 12 kHz passband
+	SuperWideBand = Bandwidth(C.OPUS_BANDWIDTH_SUPERWIDEBAND)
+	// 20 kHz passband
+	Fullband = Bandwidth(C.OPUS_BANDWIDTH_FULLBAND)
+)
 
 var errEncUninitialized = fmt.Errorf("opus encoder uninitialized")
 
@@ -161,4 +236,81 @@ func (enc *Encoder) DTX() bool {
 // SampleRate returns the encoder sample rate in Hz.
 func (enc *Encoder) SampleRate() int {
 	return int(C.bridge_encoder_get_sample_rate(enc.p))
+}
+
+// SetBitrate sets the bitrate of the Encoder
+func (enc *Encoder) SetBitrate(bitrate int) error {
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(bitrate))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// SetBitrateAuto will allow the encoder to automatically set the bitrate
+func (enc *Encoder) SetBitrateAuto() error {
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_AUTO))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// SetBitrateMax causes the encoder to use as much rate as it can. This can be
+// useful for controlling the rate by adjusting the output buffer size.
+func (enc *Encoder) SetBitrateMax() error {
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_MAX))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// Bitrate returns the bitrate of the Encoder
+func (enc *Encoder) Bitrate() (int, error) {
+	var bitrate C.opus_int32
+	res := C.bridge_encoder_get_bitrate(enc.p, &bitrate)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(bitrate), nil
+}
+
+// SetComplexity sets the encoder's computational complexity
+func (enc *Encoder) SetComplexity(complexity int) error {
+	res := C.bridge_encoder_set_complexity(enc.p, C.opus_int32(complexity))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// Complexity returns the computational complexity used by the encoder
+func (enc *Encoder) Complexity() (int, error) {
+	var complexity C.opus_int32
+	res := C.bridge_encoder_get_complexity(enc.p, &complexity)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(complexity), nil
+}
+
+// SetMaxBandwidth configures the maximum bandpass that the encoder will select
+// automatically
+func (enc *Encoder) SetMaxBandwidth(maxBw Bandwidth) error {
+	res := C.bridge_encoder_set_max_bandwidth(enc.p, C.opus_int32(maxBw))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// MaxBandwidth gets the encoder's configured maximum allowed bandpass.
+func (enc *Encoder) MaxBandwidth() (Bandwidth, error) {
+	var maxBw C.opus_int32
+	res := C.bridge_encoder_get_max_bandwidth(enc.p, &maxBw)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return Bandwidth(maxBw), nil
 }
