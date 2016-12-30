@@ -36,8 +36,14 @@ func TestEncoderDTX(t *testing.T) {
 	}
 	vals := []bool{true, false}
 	for _, dtx := range vals {
-		enc.UseDTX(dtx)
-		gotv := enc.DTX()
+		err := enc.UseDTX(dtx)
+		if err != nil {
+			t.Fatalf("Error setting DTX to %t: %v", dtx, err)
+		}
+		gotv, err := enc.DTX()
+		if err != nil {
+			t.Fatalf("Error getting DTX (%t): %v", dtx, err)
+		}
 		if gotv != dtx {
 			t.Errorf("Error set dtx: expect dtx=%v, got dtx=%v", dtx, gotv)
 		}
@@ -51,7 +57,10 @@ func TestEncoderSampleRate(t *testing.T) {
 		if err != nil || enc == nil {
 			t.Fatalf("Error creating new encoder with sample_rate %d Hz: %v", f, err)
 		}
-		f2 := enc.SampleRate()
+		f2, err := enc.SampleRate()
+		if err != nil {
+			t.Fatalf("Error getting sample rate (%d Hz): %v", f, err)
+		}
 		if f != f2 {
 			t.Errorf("Unexpected sample rate reported by %d Hz encoder: %d", f, f2)
 		}
