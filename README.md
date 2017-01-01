@@ -202,3 +202,8 @@ up .dll files from the same dir by default? I don't know. But there are ways.
 
 The licensing terms for the Go bindings are found in the LICENSE file. The
 authors and copyright holders are listed in the AUTHORS file.
+
+The copyright notice uses range notation to indicate all years in between are
+subject to copyright, as well. This statement is necessary, apparently. For all
+those nefarious actors ready to abuse a copyright notice with incorrect
+notation, but thwarted by a mention in the README. Pfew!
