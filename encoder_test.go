@@ -88,7 +88,7 @@ func TestEncoder_SetGetBitrate(t *testing.T) {
 	}
 }
 
-func TestEncoder_SetBitrateAuto(t *testing.T) {
+func TestEncoder_SetBitrateToAuto(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
@@ -108,7 +108,7 @@ func TestEncoder_SetBitrateAuto(t *testing.T) {
 		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
 	}
 
-	err = enc.SetBitrateAuto()
+	err = enc.SetBitrateToAuto()
 	if err != nil {
 		t.Error("Error setting Auto bitrate:", err)
 	}
@@ -124,7 +124,7 @@ func TestEncoder_SetBitrateAuto(t *testing.T) {
 	}
 }
 
-func TestEncoder_SetBitrateMax(t *testing.T) {
+func TestEncoder_SetBitrateToMax(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
@@ -144,7 +144,7 @@ func TestEncoder_SetBitrateMax(t *testing.T) {
 		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
 	}
 
-	err = enc.SetBitrateMax()
+	err = enc.SetBitrateToMax()
 	if err != nil {
 		t.Error("Error setting Max bitrate:", err)
 	}

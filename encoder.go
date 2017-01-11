@@ -245,7 +245,7 @@ func (enc *Encoder) SetBitrate(bitrate int) error {
 }
 
 // SetBitrateAuto will allow the encoder to automatically set the bitrate
-func (enc *Encoder) SetBitrateAuto() error {
+func (enc *Encoder) SetBitrateToAuto() error {
 	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_AUTO))
 	if res != C.OPUS_OK {
 		return Error(res)
@@ -255,7 +255,7 @@ func (enc *Encoder) SetBitrateAuto() error {
 
 // SetBitrateMax causes the encoder to use as much rate as it can. This can be
 // useful for controlling the rate by adjusting the output buffer size.
-func (enc *Encoder) SetBitrateMax() error {
+func (enc *Encoder) SetBitrateToMax() error {
 	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_MAX))
 	if res != C.OPUS_OK {
 		return Error(res)
