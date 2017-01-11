@@ -1,4 +1,4 @@
-// Copyright © 2015, 2016 Authors (see AUTHORS file)
+// Copyright © 2015-2017 Go Opus Authors (see AUTHORS file)
 //
 // License for use of this code is detailed in the LICENSE file
 
@@ -36,8 +36,14 @@ func TestEncoderDTX(t *testing.T) {
 	}
 	vals := []bool{true, false}
 	for _, dtx := range vals {
-		enc.UseDTX(dtx)
-		gotv := enc.DTX()
+		err := enc.SetDTX(dtx)
+		if err != nil {
+			t.Fatalf("Error setting DTX to %t: %v", dtx, err)
+		}
+		gotv, err := enc.DTX()
+		if err != nil {
+			t.Fatalf("Error getting DTX (%t): %v", dtx, err)
+		}
 		if gotv != dtx {
 			t.Errorf("Error set dtx: expect dtx=%v, got dtx=%v", dtx, gotv)
 		}
@@ -51,7 +57,10 @@ func TestEncoderSampleRate(t *testing.T) {
 		if err != nil || enc == nil {
 			t.Fatalf("Error creating new encoder with sample_rate %d Hz: %v", f, err)
 		}
-		f2 := enc.SampleRate()
+		f2, err := enc.SampleRate()
+		if err != nil {
+			t.Fatalf("Error getting sample rate (%d Hz): %v", f, err)
+		}
 		if f != f2 {
 			t.Errorf("Unexpected sample rate reported by %d Hz encoder: %d", f, f2)
 		}
@@ -79,7 +88,7 @@ func TestEncoder_SetGetBitrate(t *testing.T) {
 	}
 }
 
-func TestEncoder_SetBitrateAuto(t *testing.T) {
+func TestEncoder_SetBitrateToAuto(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
@@ -99,7 +108,7 @@ func TestEncoder_SetBitrateAuto(t *testing.T) {
 		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
 	}
 
-	err = enc.SetBitrateAuto()
+	err = enc.SetBitrateToAuto()
 	if err != nil {
 		t.Error("Error setting Auto bitrate:", err)
 	}
@@ -115,7 +124,7 @@ func TestEncoder_SetBitrateAuto(t *testing.T) {
 	}
 }
 
-func TestEncoder_SetBitrateMax(t *testing.T) {
+func TestEncoder_SetBitrateToMax(t *testing.T) {
 	enc, err := NewEncoder(8000, 1, AppVoIP)
 	if err != nil || enc == nil {
 		t.Errorf("Error creating new encoder: %v", err)
@@ -135,7 +144,7 @@ func TestEncoder_SetBitrateMax(t *testing.T) {
 		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, bitrate)
 	}
 
-	err = enc.SetBitrateMax()
+	err = enc.SetBitrateToMax()
 	if err != nil {
 		t.Error("Error setting Max bitrate:", err)
 	}

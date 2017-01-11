@@ -1,4 +1,4 @@
-// Copyright © 2015, 2016 Authors (see AUTHORS file)
+// Copyright © 2015-2017 Go Opus Authors (see AUTHORS file)
 //
 // License for use of this code is detailed in the LICENSE file
 
@@ -27,16 +27,6 @@ var (
 	AppAudio = Application(C.CONST_APPLICATION_AUDIO)
 	// Optimize encoding for low latency applications
 	AppRestrictedLowdelay = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
-)
-
-// DEPRECATED -- Don't use these. Will be removed end of 2017.
-var (
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_VOIP = Application(C.CONST_APPLICATION_VOIP)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_AUDIO = Application(C.CONST_APPLICATION_AUDIO)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_RESTRICTED_LOWDELAY = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
 const (

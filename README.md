@@ -1,5 +1,8 @@
 [![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
 
+*WARNING: This version is not yet released! No backwards compatibility is
+guaranteed in the API until this notice is removed from the README.*
+
 ## Go wrapper for Opus
 
 This package provides Go bindings for the xiph.org C libraries libopus and
@@ -17,15 +20,21 @@ xiph.org opus libs:
 * decoders
 * stream handlers
 
+### Import
+
+```go
+import "gopkg.in/hraban/opus.v2"
+```
+
 ### Encoding
 
 To encode raw audio to the Opus format, create an encoder first:
 
 ```go
-const sample_rate = 48000
+const sampleRate = 48000
 const channels = 1 // mono; 2 for stereo
 
-enc, err := opus.NewEncoder(sample_rate, channels, opus.APPLICATION_VOIP)
+enc, err := opus.NewEncoder(sampleRate, channels, opus.AppVoIP)
 if err != nil {
     ...
 }
@@ -40,19 +49,19 @@ documentation](https://www.opus-codec.org/docs/opus_api-1.1.3/group__opus__encod
 
 ```go
 var pcm []int16 = ... // obtain your raw PCM data somewhere
-const buffer_size = 1000 // choose any buffer size you like. 1k is plenty.
+const bufferSize = 1000 // choose any buffer size you like. 1k is plenty.
 
 // Check the frame size. You don't need to do this if you trust your input.
-frame_size := len(pcm) // must be interleaved if stereo
-frame_size_ms := float32(frame_size) / channels * 1000 / sample_rate
-switch frame_size_ms {
+frameSize := len(pcm) // must be interleaved if stereo
+frameSizeMs := float32(frameSize) / channels * 1000 / sampleRate
+switch frameSizeMs {
 case 2.5, 5, 10, 20, 40, 60:
     // Good.
 default:
-    return fmt.Errorf("Illegal frame size: %d bytes (%f ms)", frame_size, frame_size_ms)
+    return fmt.Errorf("Illegal frame size: %d bytes (%f ms)", frameSize, frameSizeMs)
 }
 
-data := make([]byte, buffer_size)
+data := make([]byte, bufferSize)
 n, err := enc.Encode(pcm, data)
 if err != nil {
     ...
@@ -74,7 +83,7 @@ the encoding process:
 To decode opus data to raw PCM format, first create a decoder:
 
 ```go
-dec, err := opus.NewDecoder(sample_rate, channels)
+dec, err := opus.NewDecoder(sampleRate, channels)
 if err != nil {
     ...
 }
@@ -83,9 +92,9 @@ if err != nil {
 Now pass it the opus bytes, and a buffer to store the PCM sound in:
 
 ```go
-var frame_size_ms float32 = ...  // if you don't know, go with 60 ms.
-frame_size := channels * frame_size_ms * sample_rate / 1000
-pcm := make([]byte, int(frame_size))
+var frameSizeMs float32 = ...  // if you don't know, go with 60 ms.
+frameSize := channels * frameSizeMs * sampleRate / 1000
+pcm := make([]byte, int(frameSize))
 n, err := dec.Decode(data, pcm)
 if err != nil {
     ...
@@ -202,3 +211,8 @@ up .dll files from the same dir by default? I don't know. But there are ways.
 
 The licensing terms for the Go bindings are found in the LICENSE file. The
 authors and copyright holders are listed in the AUTHORS file.
+
+The copyright notice uses range notation to indicate all years in between are
+subject to copyright, as well. This statement is necessary, apparently. For all
+those nefarious actors ready to abuse a copyright notice with incorrect
+notation, but thwarted by a mention in the README. Pfew!
