@@ -60,27 +60,6 @@ var (
 	ErrAllocFail      = Error(C.CONST_OPUS_ALLOC_FAIL)
 )
 
-// DEPRECATED versions of the camel cased names. Will be removed end of
-// 2017.  Please don't use.
-var (
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_OK = Error(C.CONST_OPUS_OK)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_BAD_ARG = Error(C.CONST_OPUS_BAD_ARG)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_BUFFER_TOO_SMALL = Error(C.CONST_OPUS_BUFFER_TOO_SMALL)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_INTERNAL_ERROR = Error(C.CONST_OPUS_INTERNAL_ERROR)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_INVALID_PACKET = Error(C.CONST_OPUS_INVALID_PACKET)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_UNIMPLEMENTED = Error(C.CONST_OPUS_UNIMPLEMENTED)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_INVALID_STATE = Error(C.CONST_OPUS_INVALID_STATE)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OPUS_ALLOC_FAIL = Error(C.CONST_OPUS_ALLOC_FAIL)
-)
-
 // Error string (in human readable format) for libopus errors.
 func (e Error) Error() string {
 	return fmt.Sprintf("opus: %s", C.GoString(C.opus_strerror(C.int(e))))
@@ -108,41 +87,6 @@ var (
 	ErrStreamBadLink      = StreamError(C.CONST_OP_EBADLINK)
 	ErrStreamNoSeek       = StreamError(C.CONST_OP_ENOSEEK)
 	ErrStreamBadTimestamp = StreamError(C.CONST_OP_EBADTIMESTAMP)
-)
-
-// DEPRECATED versions of the camel cased names. Will be removed end of 2017.
-// Please don't use.
-var (
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_FALSE = StreamError(C.CONST_OP_FALSE)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EOF = StreamError(C.CONST_OP_EOF)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_HOLE = StreamError(C.CONST_OP_HOLE)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EREAD = StreamError(C.CONST_OP_EREAD)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EFAULT = StreamError(C.CONST_OP_EFAULT)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EIMPL = StreamError(C.CONST_OP_EIMPL)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EINVAL = StreamError(C.CONST_OP_EINVAL)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_ENOTFORMAT = StreamError(C.CONST_OP_ENOTFORMAT)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EBADHEADER = StreamError(C.CONST_OP_EBADHEADER)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EVERSION = StreamError(C.CONST_OP_EVERSION)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_ENOTAUDIO = StreamError(C.CONST_OP_ENOTAUDIO)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EBADPACKET = StreamError(C.CONST_OP_EBADPACKET)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EBADLINK = StreamError(C.CONST_OP_EBADLINK)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_ENOSEEK = StreamError(C.CONST_OP_ENOSEEK)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	ERR_OP_EBADTIMESTAMP = StreamError(C.CONST_OP_EBADTIMESTAMP)
 )
 
 func (i StreamError) Error() string {

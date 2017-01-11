@@ -29,16 +29,6 @@ var (
 	AppRestrictedLowdelay = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
-// DEPRECATED -- Don't use these. Will be removed end of 2017.
-var (
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_VOIP = Application(C.CONST_APPLICATION_VOIP)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_AUDIO = Application(C.CONST_APPLICATION_AUDIO)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_RESTRICTED_LOWDELAY = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
-)
-
 const (
 	xMAX_BITRATE       = 48000
 	xMAX_FRAME_SIZE_MS = 60
