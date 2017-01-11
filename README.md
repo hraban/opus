@@ -108,12 +108,12 @@ To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
 io.Reader providing the raw stream bytes and returns the decoded Opus data.
 
-See https://godoc.org/github.com/hraban/opus#Stream for further info.
+See https://godoc.org/gopkg.in/hraban/opus.v1#Stream for further info.
 
 ### API Docs
 
 Go wrapper API reference:
-https://godoc.org/github.com/hraban/opus
+https://godoc.org/gopkg.in/hraban/opus.v1
 
 Full libopus C API reference:
 https://www.opus-codec.org/docs/opus_api-1.1.3/
