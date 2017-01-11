@@ -1,5 +1,8 @@
 [![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
 
+*WARNING: This version is not yet released! No backwards compatibility is
+guaranteed in the API until this notice is removed from the README.*
+
 ## Go wrapper for Opus
 
 This package provides Go bindings for the xiph.org C libraries libopus and
@@ -16,6 +19,12 @@ xiph.org opus libs:
 * encoders
 * decoders
 * stream handlers
+
+### Import
+
+```go
+import "gopkg.in/hraban/opus.v2"
+```
 
 ### Encoding
 
