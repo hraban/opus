@@ -11,7 +11,11 @@ import (
 
 /*
 #cgo pkg-config: opus
+#ifdef __APPLE__
+#include <opus.h>
+#else
 #include <opus/opus.h>
+#endif
 
 int
 bridge_encoder_set_dtx(OpusEncoder *st, opus_int32 use_dtx)

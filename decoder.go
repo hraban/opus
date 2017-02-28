@@ -11,7 +11,11 @@ import (
 
 /*
 #cgo pkg-config: opus
+#ifdef __APPLE__
+#include <opus.h>
+#else
 #include <opus/opus.h>
+#endif
 */
 import "C"
 

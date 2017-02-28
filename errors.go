@@ -10,7 +10,11 @@ import (
 
 /*
 #cgo pkg-config: opus opusfile
+#ifdef __APPLE__
+#include <opus.h>
+#else
 #include <opus/opus.h>
+#endif
 #include <opusfile.h>
 
 // Access the preprocessor from CGO
