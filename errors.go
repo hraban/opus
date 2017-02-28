@@ -10,7 +10,7 @@ import (
 
 /*
 #cgo pkg-config: opus opusfile
-#include <opus/opus.h>
+#include <opus.h>
 #include <opusfile.h>
 
 // Access the preprocessor from CGO
