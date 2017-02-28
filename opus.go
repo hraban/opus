@@ -7,7 +7,11 @@ package opus
 /*
 // Link opus using pkg-config.
 #cgo pkg-config: opus
+#ifdef __APPLE__
+#include <opus.h>
+#else
 #include <opus/opus.h>
+#endif
 
 // Access the preprocessor from CGO
 const int CONST_APPLICATION_VOIP = OPUS_APPLICATION_VOIP;
