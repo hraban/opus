@@ -11,7 +11,7 @@ import (
 
 /*
 #cgo pkg-config: opus
-#include <opus/opus.h>
+#include <opus.h>
 */
 import "C"
 
