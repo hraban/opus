@@ -15,7 +15,7 @@ xiph.org opus libs:
 
 * encoders
 * decoders
-* stream handlers
+* files & streams
 
 ### Import
 
@@ -113,6 +113,33 @@ for i := 0; i < n; i++ {
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
 io.Reader providing the raw stream bytes and returns the decoded Opus data.
+
+A crude example for reading from a .opus file:
+
+```go
+f, err := os.Open(fname)
+if err != nil {
+    ...
+}
+s, err := opus.NewStream(f)
+if err != nil {
+    ...
+}
+defer s.Close()
+buf := make([]byte, 16384)
+for {
+    n, err = s.Read(buf)
+    if err == io.EOF {
+        break
+    } else if err != nil {
+        ...
+    }
+    pcm := buf[:n*channels]
+
+    // send pcm to audio device here, or write to a .wav file
+
+}
+```
 
 See https://godoc.org/gopkg.in/hraban/opus.v2#Stream for further info.
 
