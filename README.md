@@ -100,11 +100,11 @@ if err != nil {
 // To get all samples (interleaved if multiple channels):
 pcm = pcm[:n*channels] // only necessary if you didn't know the right frame size
 
-// or access directly:
+// or access sample per sample, directly:
 for i := 0; i < n; i++ {
     ch1 := pcm[i*channels+0]
-    // if stereo:
-    ch2 := pcm[i*channels+1]
+    // For stereo output: copy ch1 into ch2 in mono mode, or deinterleave stereo
+    ch2 := pcm[(i*channels)+(channels-1)]
 }
 ```
 
