@@ -24,7 +24,7 @@ type Decoder struct {
 	sample_rate int
 }
 
-// NewEncoder allocates a new Opus decoder and initializes it with the
+// NewDecoder allocates a new Opus decoder and initializes it with the
 // appropriate parameters. All related memory is managed by the Go GC.
 func NewDecoder(sample_rate int, channels int) (*Decoder, error) {
 	var dec Decoder
