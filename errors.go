@@ -12,35 +12,6 @@ import (
 #cgo pkg-config: opus opusfile
 #include <opus.h>
 #include <opusfile.h>
-
-// Access the preprocessor from CGO
-
-// Errors for libopus
-const int CONST_OPUS_OK = OPUS_OK;
-const int CONST_OPUS_BAD_ARG = OPUS_BAD_ARG;
-const int CONST_OPUS_BUFFER_TOO_SMALL = OPUS_BUFFER_TOO_SMALL;
-const int CONST_OPUS_INTERNAL_ERROR = OPUS_INTERNAL_ERROR;
-const int CONST_OPUS_INVALID_PACKET = OPUS_INVALID_PACKET;
-const int CONST_OPUS_UNIMPLEMENTED = OPUS_UNIMPLEMENTED;
-const int CONST_OPUS_INVALID_STATE = OPUS_INVALID_STATE;
-const int CONST_OPUS_ALLOC_FAIL = OPUS_ALLOC_FAIL;
-
-// Errors for libopusfile
-const int CONST_OP_FALSE = OP_FALSE;
-const int CONST_OP_EOF = OP_EOF;
-const int CONST_OP_HOLE = OP_HOLE;
-const int CONST_OP_EREAD = OP_EREAD;
-const int CONST_OP_EFAULT = OP_EFAULT;
-const int CONST_OP_EIMPL = OP_EIMPL;
-const int CONST_OP_EINVAL = OP_EINVAL;
-const int CONST_OP_ENOTFORMAT = OP_ENOTFORMAT;
-const int CONST_OP_EBADHEADER = OP_EBADHEADER;
-const int CONST_OP_EVERSION = OP_EVERSION;
-const int CONST_OP_ENOTAUDIO = OP_ENOTAUDIO;
-const int CONST_OP_EBADPACKET = OP_EBADPACKET;
-const int CONST_OP_EBADLINK = OP_EBADLINK;
-const int CONST_OP_ENOSEEK = OP_ENOSEEK;
-const int CONST_OP_EBADTIMESTAMP = OP_EBADTIMESTAMP;
 */
 import "C"
 
@@ -49,15 +20,15 @@ type Error int
 var _ error = Error(0)
 
 // Libopus errors
-var (
-	ErrOK             = Error(C.CONST_OPUS_OK)
-	ErrBadArg         = Error(C.CONST_OPUS_BAD_ARG)
-	ErrBufferTooSmall = Error(C.CONST_OPUS_BUFFER_TOO_SMALL)
-	ErrInternalError  = Error(C.CONST_OPUS_INTERNAL_ERROR)
-	ErrInvalidPacket  = Error(C.CONST_OPUS_INVALID_PACKET)
-	ErrUnimplemented  = Error(C.CONST_OPUS_UNIMPLEMENTED)
-	ErrInvalidState   = Error(C.CONST_OPUS_INVALID_STATE)
-	ErrAllocFail      = Error(C.CONST_OPUS_ALLOC_FAIL)
+const (
+	ErrOK             = Error(C.OPUS_OK)
+	ErrBadArg         = Error(C.OPUS_BAD_ARG)
+	ErrBufferTooSmall = Error(C.OPUS_BUFFER_TOO_SMALL)
+	ErrInternalError  = Error(C.OPUS_INTERNAL_ERROR)
+	ErrInvalidPacket  = Error(C.OPUS_INVALID_PACKET)
+	ErrUnimplemented  = Error(C.OPUS_UNIMPLEMENTED)
+	ErrInvalidState   = Error(C.OPUS_INVALID_STATE)
+	ErrAllocFail      = Error(C.OPUS_ALLOC_FAIL)
 )
 
 // Error string (in human readable format) for libopus errors.
@@ -71,22 +42,22 @@ var _ error = StreamError(0)
 
 // Libopusfile errors. The names are copied verbatim from the libopusfile
 // library.
-var (
-	ErrStreamFalse        = StreamError(C.CONST_OP_FALSE)
-	ErrStreamEOF          = StreamError(C.CONST_OP_EOF)
-	ErrStreamHole         = StreamError(C.CONST_OP_HOLE)
-	ErrStreamRead         = StreamError(C.CONST_OP_EREAD)
-	ErrStreamFault        = StreamError(C.CONST_OP_EFAULT)
-	ErrStreamImpl         = StreamError(C.CONST_OP_EIMPL)
-	ErrStreamInval        = StreamError(C.CONST_OP_EINVAL)
-	ErrStreamNotFormat    = StreamError(C.CONST_OP_ENOTFORMAT)
-	ErrStreamBadHeader    = StreamError(C.CONST_OP_EBADHEADER)
-	ErrStreamVersion      = StreamError(C.CONST_OP_EVERSION)
-	ErrStreamNotAudio     = StreamError(C.CONST_OP_ENOTAUDIO)
-	ErrStreamBadPacked    = StreamError(C.CONST_OP_EBADPACKET)
-	ErrStreamBadLink      = StreamError(C.CONST_OP_EBADLINK)
-	ErrStreamNoSeek       = StreamError(C.CONST_OP_ENOSEEK)
-	ErrStreamBadTimestamp = StreamError(C.CONST_OP_EBADTIMESTAMP)
+const (
+	ErrStreamFalse        = StreamError(C.OP_FALSE)
+	ErrStreamEOF          = StreamError(C.OP_EOF)
+	ErrStreamHole         = StreamError(C.OP_HOLE)
+	ErrStreamRead         = StreamError(C.OP_EREAD)
+	ErrStreamFault        = StreamError(C.OP_EFAULT)
+	ErrStreamImpl         = StreamError(C.OP_EIMPL)
+	ErrStreamInval        = StreamError(C.OP_EINVAL)
+	ErrStreamNotFormat    = StreamError(C.OP_ENOTFORMAT)
+	ErrStreamBadHeader    = StreamError(C.OP_EBADHEADER)
+	ErrStreamVersion      = StreamError(C.OP_EVERSION)
+	ErrStreamNotAudio     = StreamError(C.OP_ENOTAUDIO)
+	ErrStreamBadPacked    = StreamError(C.OP_EBADPACKET)
+	ErrStreamBadLink      = StreamError(C.OP_EBADLINK)
+	ErrStreamNoSeek       = StreamError(C.OP_ENOSEEK)
+	ErrStreamBadTimestamp = StreamError(C.OP_EBADTIMESTAMP)
 )
 
 func (i StreamError) Error() string {
