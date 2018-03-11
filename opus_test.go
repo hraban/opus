@@ -124,7 +124,7 @@ func TestStereo(t *testing.T) {
 	data = data[:n]
 	n, err = dec.Decode(data, pcm)
 	if err != nil {
-		t.Fatal("Couldn't decode data: %v", err)
+		t.Fatalf("Couldn't decode data: %v", err)
 	}
 	if n*CHANNELS != len(pcm) {
 		t.Fatalf("Length mismatch: %d samples in, %d out", len(pcm), n*CHANNELS)
