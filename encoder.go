@@ -68,22 +68,12 @@ bridge_encoder_get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
 	return opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
 }
 
-// Access the preprocessor from CGO
-const int CONST_BANDWIDTH_NARROWBAND = OPUS_BANDWIDTH_NARROWBAND;
-const int CONST_BANDWIDTH_MEDIUMBAND = OPUS_BANDWIDTH_MEDIUMBAND;
-const int CONST_BANDWIDTH_WIDEBAND = OPUS_BANDWIDTH_WIDEBAND;
-const int CONST_BANDWIDTH_SUPERWIDEBAND = OPUS_BANDWIDTH_SUPERWIDEBAND;
-const int CONST_BANDWIDTH_FULLBAND = OPUS_BANDWIDTH_FULLBAND;
-
-const int CONST_BITRATE_AUTO = OPUS_AUTO;
-const int CONST_BITRATE_MAX = OPUS_BITRATE_MAX;
-
 */
 import "C"
 
 type Bandwidth int
 
-var (
+const (
 	// 4 kHz passband
 	Narrowband = Bandwidth(C.OPUS_BANDWIDTH_NARROWBAND)
 	// 6 kHz passband
@@ -246,7 +236,7 @@ func (enc *Encoder) SetBitrate(bitrate int) error {
 
 // SetBitrateToAuto will allow the encoder to automatically set the bitrate
 func (enc *Encoder) SetBitrateToAuto() error {
-	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_AUTO))
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.OPUS_AUTO))
 	if res != C.OPUS_OK {
 		return Error(res)
 	}
@@ -256,7 +246,7 @@ func (enc *Encoder) SetBitrateToAuto() error {
 // SetBitrateToMax causes the encoder to use as much rate as it can. This can be
 // useful for controlling the rate by adjusting the output buffer size.
 func (enc *Encoder) SetBitrateToMax() error {
-	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.CONST_BITRATE_MAX))
+	res := C.bridge_encoder_set_bitrate(enc.p, C.opus_int32(C.OPUS_BITRATE_MAX))
 	if res != C.OPUS_OK {
 		return Error(res)
 	}

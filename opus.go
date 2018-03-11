@@ -8,25 +8,18 @@ package opus
 // Link opus using pkg-config.
 #cgo pkg-config: opus
 #include <opus.h>
-
-// Access the preprocessor from CGO
-const int CONST_APPLICATION_VOIP = OPUS_APPLICATION_VOIP;
-const int CONST_APPLICATION_AUDIO = OPUS_APPLICATION_AUDIO;
-const int CONST_APPLICATION_RESTRICTED_LOWDELAY = OPUS_APPLICATION_RESTRICTED_LOWDELAY;
 */
 import "C"
 
 type Application int
 
-// These variables should be constants, but for interoperability with CGO
-// they're var. Don't change them, though!
-var (
+const (
 	// Optimize encoding for VoIP
-	AppVoIP = Application(C.CONST_APPLICATION_VOIP)
+	AppVoIP = Application(C.OPUS_APPLICATION_VOIP)
 	// Optimize encoding for non-voice signals like music
-	AppAudio = Application(C.CONST_APPLICATION_AUDIO)
+	AppAudio = Application(C.OPUS_APPLICATION_AUDIO)
 	// Optimize encoding for low latency applications
-	AppRestrictedLowdelay = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
+	AppRestrictedLowdelay = Application(C.OPUS_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
 const (
