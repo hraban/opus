@@ -12,6 +12,12 @@ import (
 /*
 #cgo pkg-config: opus
 #include <opus.h>
+
+int
+bridge_decoder_get_last_packet_duration(OpusDecoder *st, opus_int32 *samples)
+{
+	return opus_decoder_ctl(st, OPUS_GET_LAST_PACKET_DURATION(samples));
+}
 */
 import "C"
 
@@ -104,4 +110,14 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 		return 0, Error(n)
 	}
 	return n, nil
+}
+
+// Gets the duration (in samples) of the last packet successfully decoded or concealed.
+func (dec *Decoder) LastPacketDuration() (int,error){
+	var samples C.opus_int32
+	res := C.bridge_decoder_get_last_packet_duration(dec.p, &samples)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(samples), nil
 }
