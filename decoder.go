@@ -138,6 +138,31 @@ func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
 	return nil
 }
 
+// Decode encoded Opus data into the supplied buffer with forward error
+// correction. The supplied buffer will be entirely filled.
+func (dec *Decoder) DecodeFECFloat32(data []byte, pcm []float32) error {
+	if dec.p == nil {
+		return errDecUninitialized
+	}
+	if len(data) == 0 {
+		return fmt.Errorf("opus: no data supplied")
+	}
+	if len(pcm) == 0 {
+		return fmt.Errorf("opus: target buffer empty")
+	}
+	n := int(C.opus_decode_float(
+		dec.p,
+		(*C.uchar)(&data[0]),
+		C.opus_int32(len(data)),
+		(*C.float)(&pcm[0]),
+		C.int(cap(pcm)),
+		1))
+	if n < 0 {
+		return Error(n)
+	}
+	return nil
+}
+
 // Gets the duration (in samples) of the last packet successfully decoded or concealed.
 func (dec *Decoder) LastPacketDuration() (int, error) {
 	var samples C.opus_int32
