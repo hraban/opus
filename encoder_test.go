@@ -259,3 +259,57 @@ func TestEncoder_SetGetMaxBandwidth(t *testing.T) {
 		}
 	}
 }
+
+func TestEncoder_SetGetInBandFEC(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+
+
+	if err := enc.SetInBandFEC(1); err != nil {
+		t.Error("Error setting fec:", err)
+	}
+
+	fec, err := enc.InBandFEC()
+	if err != nil {
+		t.Error("Error getting fec", err)
+	}
+	if fec !=1{
+		t.Error("Wrong fec value ")
+	}
+
+	if err := enc.SetInBandFEC(0); err != nil {
+		t.Error("Error setting fec:", err)
+	}
+
+	fec, err = enc.InBandFEC()
+	if err != nil {
+		t.Error("Error getting fec", err)
+	}
+	if fec !=0{
+		t.Error("Wrong fec value")
+	}
+}
+
+func TestEncoder_SetGetPacketLossPerc(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []int{0, 5, 10, 20}
+	for _, lossPerc := range vals {
+		err := enc.SetPacketLossPerc(lossPerc)
+		if err != nil {
+			t.Error("Error setting loss percentage value:", err)
+		}
+		lp, err := enc.PacketLossPerc()
+		if err != nil {
+			t.Error("Error getting loss percentage value", err)
+		}
+		if lp != lossPerc {
+			t.Errorf("Unexpected encoder loss percentage value. Got %d, but expected %d",
+				lp, lossPerc)
+		}
+	}
+}

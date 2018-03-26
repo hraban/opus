@@ -68,6 +68,30 @@ bridge_encoder_get_max_bandwidth(OpusEncoder *st, opus_int32 *max_bw)
 	return opus_encoder_ctl(st, OPUS_GET_MAX_BANDWIDTH(max_bw));
 }
 
+int
+bridge_encoder_set_inband_fec(OpusEncoder *st, opus_int32 fec)
+{
+	return opus_encoder_ctl(st, OPUS_SET_INBAND_FEC(fec));
+}
+
+int
+bridge_encoder_get_inband_fec(OpusEncoder *st, opus_int32 *fec)
+{
+	return opus_encoder_ctl(st, OPUS_GET_INBAND_FEC(fec));
+}
+
+int
+bridge_encoder_set_packet_loss_perc(OpusEncoder *st, opus_int32 loss_perc)
+{
+	return opus_encoder_ctl(st, OPUS_SET_PACKET_LOSS_PERC(loss_perc));
+}
+
+int
+bridge_encoder_get_packet_loss_perc(OpusEncoder *st, opus_int32 *loss_perc)
+{
+	return opus_encoder_ctl(st, OPUS_GET_PACKET_LOSS_PERC(loss_perc));
+}
+
 */
 import "C"
 
@@ -300,4 +324,44 @@ func (enc *Encoder) MaxBandwidth() (Bandwidth, error) {
 		return 0, Error(res)
 	}
 	return Bandwidth(maxBw), nil
+}
+
+
+// SetInBandFEC configures the encoder's use of inband forward error
+// correction (FEC)
+func (enc *Encoder) SetInBandFEC(fec int) error {
+	res := C.bridge_encoder_set_inband_fec(enc.p, C.opus_int32(fec))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// InBandFEC gets the encoder's configured inband forward error correction (FEC)
+func (enc *Encoder) InBandFEC() (int, error) {
+	var fec C.opus_int32
+	res := C.bridge_encoder_get_inband_fec(enc.p, &fec)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(fec), nil
+}
+
+// SetPacketLossPerc configures the encoder's expected packet loss percentage.
+func (enc *Encoder) SetPacketLossPerc(lossPerc int) error {
+	res := C.bridge_encoder_set_packet_loss_perc(enc.p, C.opus_int32(lossPerc))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// PacketLossPerc gets the encoder's configured packet loss percentage.
+func (enc *Encoder) PacketLossPerc() (int, error) {
+	var lossPerc C.opus_int32
+	res := C.bridge_encoder_get_packet_loss_perc(enc.p, &lossPerc)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(lossPerc), nil
 }
