@@ -59,6 +59,90 @@ func TestCodec(t *testing.T) {
 	// passes error codes through, and that's that.
 }
 
+func TestCodecFEC(t *testing.T) {
+	// Create bogus input sound
+	const G4 = 391.995
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 60
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	const PACKET_SIZE = 480 // 10ms packet
+	pcm := make([]int16, 0)
+
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Fatalf("Error creating new encoder: %v", err)
+	}
+	enc.SetPacketLossPerc(30)
+	enc.SetInBandFEC(1)
+
+	dec, err := NewDecoder(SAMPLE_RATE, 1)
+	if err != nil || dec == nil {
+		t.Fatalf("Error creating new decoder: %v", err)
+	}
+
+	mono := make([]int16, FRAME_SIZE)
+	addSine(mono, SAMPLE_RATE, G4)
+
+	encodedData := make([][]byte, FRAME_SIZE/PACKET_SIZE)
+	for i, idx := 0, 0; i < len(mono); i += PACKET_SIZE {
+		data := make([]byte, 1000)
+		n, err := enc.Encode(mono[i:i+PACKET_SIZE], data)
+		if err != nil {
+			t.Fatalf("Couldn't encode data: %v", err)
+		}
+		data = data[:n]
+		encodedData[idx] = data
+		idx++
+	}
+
+	lost := false
+	for i := 0; i < len(encodedData); i++ {
+		// "Dropping" packets 2 and 4
+		if i == 2 || i == 4 {
+			lost = true
+			continue
+		}
+		if lost {
+			samples, err := dec.LastPacketDuration()
+			if err != nil {
+				t.Fatalf("Couldn't get last packet duration: %v", err)
+			}
+
+			pcmBuffer := make([]int16, samples)
+			if err = dec.DecodeFEC(encodedData[i], pcmBuffer); err != nil {
+				t.Fatalf("Couldn't decode data: %v", err)
+			}
+			pcm = append(pcm, pcmBuffer...)
+			lost = false
+		}
+
+		pcmBuffer := make([]int16, FRAME_SIZE)
+		n, err := dec.Decode(encodedData[i], pcmBuffer)
+		if err != nil {
+			t.Fatalf("Couldn't decode data: %v", err)
+		}
+		pcmBuffer = pcmBuffer[:n]
+		if len(pcmBuffer) != n {
+			t.Fatalf("Length mismatch: %d samples in, %d out", len(pcmBuffer), n)
+		}
+		pcm = append(pcm, pcmBuffer...)
+	}
+
+	if len(mono) != len(pcm) {
+		t.Fatalf("Input/Output length mismatch: %d samples in, %d out", len(mono), len(pcm))
+	}
+
+	// This is hard to check programatically, but I plotted the graphs in a
+	// spreadsheet and it looked great. The encoded waves both start out with a
+	// string of zero samples before they pick up, and the G4 is phase shifted
+	// by half a period, but that's all fine for lossy audio encoding.
+
+	//fmt.Printf("in,out\n")
+	//for i := range mono {
+	//	fmt.Printf("%d,%d\n", mono[i], pcm[i])
+	//}
+}
+
 func TestCodecFloat32(t *testing.T) {
 	// Create bogus input sound
 	const G4 = 391.995
