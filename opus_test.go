@@ -154,7 +154,7 @@ func TestCodecFEC(t *testing.T) {
 			t.Fatalf("Couldn't decode data: %v", err)
 		}
 		pcmBuffer = pcmBuffer[:n]
-		if len(pcmBuffer) != n {
+		if n != FRAME_SIZE {
 			t.Fatalf("Length mismatch: %d samples in, %d out", len(pcmBuffer), n)
 		}
 		pcm = append(pcm, pcmBuffer...)
@@ -237,7 +237,7 @@ func TestCodecFECFloat32(t *testing.T) {
 			t.Fatalf("Couldn't decode data: %v", err)
 		}
 		pcmBuffer = pcmBuffer[:n]
-		if len(pcmBuffer) != n {
+		if n != FRAME_SIZE {
 			t.Fatalf("Length mismatch: %d samples in, %d out", len(pcmBuffer), n)
 		}
 		pcm = append(pcm, pcmBuffer...)
