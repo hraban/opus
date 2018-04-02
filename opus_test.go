@@ -95,9 +95,9 @@ func TestCodecFEC(t *testing.T) {
 	// Create bogus input sound
 	const G4 = 391.995
 	const SAMPLE_RATE = 48000
-	const FRAME_SIZE_MS = 60
+	const FRAME_SIZE_MS = 10
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
-	const PACKET_SIZE = 480 // 10ms packet
+	const NUMBER_OF_FRAMES = 6
 	pcm := make([]int16, 0)
 
 	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
@@ -112,13 +112,13 @@ func TestCodecFEC(t *testing.T) {
 		t.Fatalf("Error creating new decoder: %v", err)
 	}
 
-	mono := make([]int16, FRAME_SIZE)
+	mono := make([]int16, FRAME_SIZE*NUMBER_OF_FRAMES)
 	addSine(mono, SAMPLE_RATE, G4)
 
-	encodedData := make([][]byte, FRAME_SIZE/PACKET_SIZE)
-	for i, idx := 0, 0; i < len(mono); i += PACKET_SIZE {
+	encodedData := make([][]byte, NUMBER_OF_FRAMES)
+	for i, idx := 0, 0; i < len(mono); i += FRAME_SIZE {
 		data := make([]byte, 1000)
-		n, err := enc.Encode(mono[i:i+PACKET_SIZE], data)
+		n, err := enc.Encode(mono[i:i+FRAME_SIZE], data)
 		if err != nil {
 			t.Fatalf("Couldn't encode data: %v", err)
 		}
@@ -148,7 +148,7 @@ func TestCodecFEC(t *testing.T) {
 			lost = false
 		}
 
-		pcmBuffer := make([]int16, FRAME_SIZE)
+		pcmBuffer := make([]int16, NUMBER_OF_FRAMES*FRAME_SIZE)
 		n, err := dec.Decode(encodedData[i], pcmBuffer)
 		if err != nil {
 			t.Fatalf("Couldn't decode data: %v", err)
@@ -171,15 +171,16 @@ func TestCodecFEC(t *testing.T) {
 			fmt.Printf("%d,%d\n", mono[i], pcm[i])
 		}
 	*/
+
 }
 
 func TestCodecFECFloat32(t *testing.T) {
 	// Create bogus input sound
 	const G4 = 391.995
 	const SAMPLE_RATE = 48000
-	const FRAME_SIZE_MS = 60
+	const FRAME_SIZE_MS = 10
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
-	const PACKET_SIZE = 480 // 10ms packet
+	const NUMBER_OF_FRAMES = 6
 	pcm := make([]float32, 0)
 
 	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
@@ -194,13 +195,13 @@ func TestCodecFECFloat32(t *testing.T) {
 		t.Fatalf("Error creating new decoder: %v", err)
 	}
 
-	mono := make([]float32, FRAME_SIZE)
+	mono := make([]float32, FRAME_SIZE*NUMBER_OF_FRAMES)
 	addSineFloat32(mono, SAMPLE_RATE, G4)
 
-	encodedData := make([][]byte, FRAME_SIZE/PACKET_SIZE)
-	for i, idx := 0, 0; i < len(mono); i += PACKET_SIZE {
+	encodedData := make([][]byte, NUMBER_OF_FRAMES)
+	for i, idx := 0, 0; i < len(mono); i += FRAME_SIZE {
 		data := make([]byte, 1000)
-		n, err := enc.EncodeFloat32(mono[i:i+PACKET_SIZE], data)
+		n, err := enc.EncodeFloat32(mono[i:i+FRAME_SIZE], data)
 		if err != nil {
 			t.Fatalf("Couldn't encode data: %v", err)
 		}
@@ -230,7 +231,7 @@ func TestCodecFECFloat32(t *testing.T) {
 			lost = false
 		}
 
-		pcmBuffer := make([]float32, FRAME_SIZE)
+		pcmBuffer := make([]float32, NUMBER_OF_FRAMES*FRAME_SIZE)
 		n, err := dec.DecodeFloat32(encodedData[i], pcmBuffer)
 		if err != nil {
 			t.Fatalf("Couldn't decode data: %v", err)
