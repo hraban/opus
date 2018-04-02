@@ -164,11 +164,7 @@ func TestCodecFEC(t *testing.T) {
 		t.Fatalf("Input/Output length mismatch: %d samples in, %d out", len(mono), len(pcm))
 	}
 
-	// This is hard to check programatically, but I plotted the graphs in a
-	// spreadsheet and it looked great. The encoded waves both start out with a
-	// string of zero samples before they pick up, and the G4 is phase shifted
-	// by half a period, but that's all fine for lossy audio encoding.
-
+	// Commented out for the same reason as in TestStereo
 	/*
 		fmt.Printf("in,out\n")
 		for i := range mono {
@@ -250,11 +246,7 @@ func TestCodecFECFloat32(t *testing.T) {
 		t.Fatalf("Input/Output length mismatch: %d samples in, %d out", len(mono), len(pcm))
 	}
 
-	// This is hard to check programatically, but I plotted the graphs in a
-	// spreadsheet and it looked great. The encoded waves both start out with a
-	// string of zero samples before they pick up, and the G4 is phase shifted
-	// by half a period, but that's all fine for lossy audio encoding.
-
+	// Commented out for the same reason as in TestStereo
 	/*
 		fmt.Printf("in,out\n")
 		for i := 0; i < len(mono); i++ {
