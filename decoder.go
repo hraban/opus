@@ -113,7 +113,8 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 }
 
 // DecodeFEC encoded Opus data into the supplied buffer with forward error
-// correction. The supplied buffer will be entirely filled.
+// correction. It is to be used on the packet directly following the lost one.
+// The supplied buffer needs to be exactly the duration of audio that is missing
 func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
 	if dec.p == nil {
 		return errDecUninitialized
@@ -139,7 +140,8 @@ func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
 }
 
 // DecodeFECFloat32 encoded Opus data into the supplied buffer with forward error
-// correction. The supplied buffer will be entirely filled.
+// correction. It is to be used on the packet directly following the lost one.
+// The supplied buffer needs to be exactly the duration of audio that is missing
 func (dec *Decoder) DecodeFECFloat32(data []byte, pcm []float32) error {
 	if dec.p == nil {
 		return errDecUninitialized
