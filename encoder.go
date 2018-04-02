@@ -326,11 +326,14 @@ func (enc *Encoder) MaxBandwidth() (Bandwidth, error) {
 	return Bandwidth(maxBw), nil
 }
 
-
 // SetInBandFEC configures the encoder's use of inband forward error
 // correction (FEC)
-func (enc *Encoder) SetInBandFEC(fec int) error {
-	res := C.bridge_encoder_set_inband_fec(enc.p, C.opus_int32(fec))
+func (enc *Encoder) SetInBandFEC(fec bool) error {
+	i := 0
+	if fec {
+		i = 1
+	}
+	res := C.bridge_encoder_set_inband_fec(enc.p, C.opus_int32(i))
 	if res != C.OPUS_OK {
 		return Error(res)
 	}
@@ -338,13 +341,13 @@ func (enc *Encoder) SetInBandFEC(fec int) error {
 }
 
 // InBandFEC gets the encoder's configured inband forward error correction (FEC)
-func (enc *Encoder) InBandFEC() (int, error) {
+func (enc *Encoder) InBandFEC() (bool, error) {
 	var fec C.opus_int32
 	res := C.bridge_encoder_get_inband_fec(enc.p, &fec)
 	if res != C.OPUS_OK {
-		return 0, Error(res)
+		return false, Error(res)
 	}
-	return int(fec), nil
+	return fec != 0, nil
 }
 
 // SetPacketLossPerc configures the encoder's expected packet loss percentage.
