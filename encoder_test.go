@@ -312,3 +312,26 @@ func TestEncoder_SetGetPacketLossPerc(t *testing.T) {
 		}
 	}
 }
+
+func TestEncoder_SetGetInvalidPacketLossPerc(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []int{-1, 101}
+	for _, lossPerc := range vals {
+		err := enc.SetPacketLossPerc(lossPerc)
+		if err == nil {
+			t.Errorf("Expected Error invalid loss percentage: %d", lossPerc)
+		}
+		lp, err := enc.PacketLossPerc()
+		if err != nil {
+			t.Error("Error getting loss percentage value", err)
+		}
+		// default packet loss percentage is 0
+		if lp != 0 {
+			t.Errorf("Unexpected encoder loss percentage value. Got %d, but expected %d",
+				lp, lossPerc)
+		}
+	}
+}
