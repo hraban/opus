@@ -266,8 +266,7 @@ func TestEncoder_SetGetInBandFEC(t *testing.T) {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
 
-
-	if err := enc.SetInBandFEC(1); err != nil {
+	if err := enc.SetInBandFEC(true); err != nil {
 		t.Error("Error setting fec:", err)
 	}
 
@@ -275,11 +274,11 @@ func TestEncoder_SetGetInBandFEC(t *testing.T) {
 	if err != nil {
 		t.Error("Error getting fec", err)
 	}
-	if fec !=1{
-		t.Error("Wrong fec value ")
+	if !fec {
+		t.Errorf("Wrong fec value. Expected %t", true)
 	}
 
-	if err := enc.SetInBandFEC(0); err != nil {
+	if err := enc.SetInBandFEC(false); err != nil {
 		t.Error("Error setting fec:", err)
 	}
 
@@ -287,8 +286,8 @@ func TestEncoder_SetGetInBandFEC(t *testing.T) {
 	if err != nil {
 		t.Error("Error getting fec", err)
 	}
-	if fec !=0{
-		t.Error("Wrong fec value")
+	if fec {
+		t.Errorf("Wrong fec value. Expected %t", false)
 	}
 }
 

@@ -105,7 +105,7 @@ func TestCodecFEC(t *testing.T) {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
 	enc.SetPacketLossPerc(30)
-	enc.SetInBandFEC(1)
+	enc.SetInBandFEC(true)
 
 	dec, err := NewDecoder(SAMPLE_RATE, 1)
 	if err != nil || dec == nil {
@@ -191,7 +191,7 @@ func TestCodecFECFloat32(t *testing.T) {
 		t.Fatalf("Error creating new encoder: %v", err)
 	}
 	enc.SetPacketLossPerc(30)
-	enc.SetInBandFEC(1)
+	enc.SetInBandFEC(true)
 
 	dec, err := NewDecoder(SAMPLE_RATE, 1)
 	if err != nil || dec == nil {
