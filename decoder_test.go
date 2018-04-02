@@ -59,10 +59,10 @@ func TestDecoder_GetLastPacketDuration(t *testing.T) {
 		t.Fatalf("Couldn't decode data: %v", err)
 	}
 	samples, err := dec.LastPacketDuration()
-	if err!=nil{
-		t.Fatalf("Couldn't get last packet duration: %v",err)
+	if err != nil {
+		t.Fatalf("Couldn't get last packet duration: %v", err)
 	}
-	if samples!=n{
+	if samples != n {
 		t.Fatalf("Wrong duration length. Expected %d. Got %d", n, samples)
 	}
 }
