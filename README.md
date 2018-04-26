@@ -108,6 +108,15 @@ for i := 0; i < n; i++ {
 }
 ```
 
+Note regarding Forward Error Correction (FEC):
+> When a packet is considered "lost", `DecodeFEC` and `DecodeFECFloat32` methods
+> can be called on the next packet in order to try and recover some of the lost
+> data. The PCM needs to be exactly the duration of audio that is missing.
+> `LastPacketDuration()` can be used on the decoder to get the length of the
+> last packet.
+> Note also that in order to use this feature the encoder needs to be configured
+> with `SetInBandFEC(true)` and `SetPacketLossPerc(x)` options.
+
 ### Streams (and files)
 
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
