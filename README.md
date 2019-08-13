@@ -180,6 +180,15 @@ Mac:
 brew install pkg-config opus opusfile
 ```
 
+### Build tags
+
+This package can be built without depending on libopusfile by using the build tag
+`nolibopusfile`. For example:
+
+```sh
+go build -tags nolibopusfile ...
+```
+
 ### Using in Docker
 
 If your Dockerized app has this library as a dependency (directly or
