@@ -2,6 +2,8 @@
 //
 // License for use of this code is detailed in the LICENSE file
 
+// +build !nolibopusfile
+
 package opus
 
 import (
