@@ -117,7 +117,7 @@ Note regarding Forward Error Correction (FEC):
 > Note also that in order to use this feature the encoder needs to be configured
 > with `SetInBandFEC(true)` and `SetPacketLossPerc(x)` options.
 
-### Streams (and files)
+### Streams (and Files)
 
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
@@ -180,12 +180,14 @@ Mac:
 brew install pkg-config opus opusfile
 ```
 
-### Build Tags
+### Building Without `libopusfile`
 
-This package can be built without depending on libopusfile by using the build tag
-`nolibopusfile`. This enables statically-linked binaries with no external
+This package can be built without `libopusfile` by using the build tag `nolibopusfile`.
+This enables the compilation of statically-linked binaries with no external
 dependencies on operating systems without a static `libopusfile`, such as
 [Alpine Linux](https://pkgs.alpinelinux.org/contents?branch=edge&name=opusfile-dev&arch=x86_64&repo=main).
+
+**Note:** this will disable all file and `Stream` APIs.
 
 To enable this feature, add `-tags nolibopusfile` to your `go build` or `go test` commands:
 
@@ -196,8 +198,6 @@ go build -tags nolibopusfile ...
 # Test
 go test -tags nolibopusfile ./...
 ```
-
-**Note:** this will disable all file and `Stream` APIs.
 
 ### Using in Docker
 
