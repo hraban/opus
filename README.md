@@ -162,7 +162,7 @@ https://www.opus-codec.org/docs/opus_api-1.1.3/
 
 For more examples, see the `_test.go` files.
 
-## Build & installation
+## Build & Installation
 
 This package requires libopus and libopusfile development packages to be
 installed on your system. These are available on Debian based systems from
@@ -180,14 +180,24 @@ Mac:
 brew install pkg-config opus opusfile
 ```
 
-### Build tags
+### Build Tags
 
 This package can be built without depending on libopusfile by using the build tag
-`nolibopusfile`. For example:
+`nolibopusfile`. This enables statically-linked binaries with no external
+dependencies on operating systems without a static `libopusfile`, such as
+[Alpine Linux](https://pkgs.alpinelinux.org/contents?branch=edge&name=opusfile-dev&arch=x86_64&repo=main).
+
+To enable this feature, add `-tags nolibopusfile` to your `go build` or `go test` commands:
 
 ```sh
+# Build
 go build -tags nolibopusfile ...
+
+# Test
+go test -tags nolibopusfile ./...
 ```
+
+**Note:** this will disable all file and `Stream` APIs.
 
 ### Using in Docker
 
