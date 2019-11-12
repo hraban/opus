@@ -178,6 +178,56 @@ func (dec *Decoder) DecodeFECFloat32(data []byte, pcm []float32) error {
 	return nil
 }
 
+// DecodePLC recovers a lost packet using Opus Packet Loss Concealment feature.
+// The supplied buffer needs to be exactly the duration of audio that is missing.
+func (dec *Decoder) DecodePLC(pcm []int16) error {
+	if dec.p == nil {
+		return errDecUninitialized
+	}
+	if len(pcm) == 0 {
+		return fmt.Errorf("opus: target buffer empty")
+	}
+	if cap(pcm)%dec.channels != 0 {
+		return fmt.Errorf("opus: output buffer capacity must be multiple of channels")
+	}
+	n := int(C.opus_decode(
+		dec.p,
+		nil,
+		0,
+		(*C.opus_int16)(&pcm[0]),
+		C.int(cap(pcm)/dec.channels),
+		0))
+	if n < 0 {
+		return Error(n)
+	}
+	return nil
+}
+
+// DecodePLCFloat32 recovers a lost packet using Opus Packet Loss Concealment feature.
+// The supplied buffer needs to be exactly the duration of audio that is missing.
+func (dec *Decoder) DecodePLCFloat32(pcm []float32) error {
+	if dec.p == nil {
+		return errDecUninitialized
+	}
+	if len(pcm) == 0 {
+		return fmt.Errorf("opus: target buffer empty")
+	}
+	if cap(pcm)%dec.channels != 0 {
+		return fmt.Errorf("opus: output buffer capacity must be multiple of channels")
+	}
+	n := int(C.opus_decode_float(
+		dec.p,
+		nil,
+		0,
+		(*C.float)(&pcm[0]),
+		C.int(cap(pcm)/dec.channels),
+		0))
+	if n < 0 {
+		return Error(n)
+	}
+	return nil
+}
+
 // LastPacketDuration gets the duration (in samples)
 // of the last packet successfully decoded or concealed.
 func (dec *Decoder) LastPacketDuration() (int, error) {
