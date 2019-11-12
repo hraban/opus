@@ -22,6 +22,7 @@ type Decoder struct {
 	// Same purpose as encoder struct
 	mem         []byte
 	sample_rate int
+	channels    int
 }
 
 // NewDecoder allocates a new Opus decoder and initializes it with the
@@ -44,6 +45,7 @@ func (dec *Decoder) Init(sample_rate int, channels int) error {
 	}
 	size := C.opus_decoder_get_size(C.int(channels))
 	dec.sample_rate = sample_rate
+	dec.channels = channels
 	dec.mem = make([]byte, size)
 	dec.p = (*C.OpusDecoder)(unsafe.Pointer(&dec.mem[0]))
 	errno := C.opus_decoder_init(
@@ -68,12 +70,15 @@ func (dec *Decoder) Decode(data []byte, pcm []int16) (int, error) {
 	if len(pcm) == 0 {
 		return 0, fmt.Errorf("opus: target buffer empty")
 	}
+	if cap(pcm)%dec.channels != 0 {
+		return 0, fmt.Errorf("opus: target buffer capacity must be multiple of channels")
+	}
 	n := int(C.opus_decode(
 		dec.p,
 		(*C.uchar)(&data[0]),
 		C.opus_int32(len(data)),
 		(*C.opus_int16)(&pcm[0]),
-		C.int(cap(pcm)),
+		C.int(cap(pcm)/dec.channels),
 		0))
 	if n < 0 {
 		return 0, Error(n)
@@ -93,12 +98,15 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 	if len(pcm) == 0 {
 		return 0, fmt.Errorf("opus: target buffer empty")
 	}
+	if cap(pcm)%dec.channels != 0 {
+		return 0, fmt.Errorf("opus: target buffer capacity must be multiple of channels")
+	}
 	n := int(C.opus_decode_float(
 		dec.p,
 		(*C.uchar)(&data[0]),
 		C.opus_int32(len(data)),
 		(*C.float)(&pcm[0]),
-		C.int(cap(pcm)),
+		C.int(cap(pcm)/dec.channels),
 		0))
 	if n < 0 {
 		return 0, Error(n)
