@@ -256,6 +256,185 @@ func TestCodecFECFloat32(t *testing.T) {
 	*/
 }
 
+func TestCodecPLC(t *testing.T) {
+	// Create bogus input sound
+	const G4 = 391.995
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 10
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	const NUMBER_OF_FRAMES = 6
+	pcm := make([]int16, 0)
+
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Fatalf("Error creating new encoder: %v", err)
+	}
+
+	dec, err := NewDecoder(SAMPLE_RATE, 1)
+	if err != nil || dec == nil {
+		t.Fatalf("Error creating new decoder: %v", err)
+	}
+
+	mono := make([]int16, FRAME_SIZE*NUMBER_OF_FRAMES)
+	addSine(mono, SAMPLE_RATE, G4)
+
+	encodedData := make([][]byte, NUMBER_OF_FRAMES)
+	for i, idx := 0, 0; i < len(mono); i += FRAME_SIZE {
+		data := make([]byte, 1000)
+		n, err := enc.Encode(mono[i:i+FRAME_SIZE], data)
+		if err != nil {
+			t.Fatalf("Couldn't encode data: %v", err)
+		}
+		data = data[:n]
+		encodedData[idx] = data
+		idx++
+	}
+
+	lost := false
+	for i := 0; i < len(encodedData); i++ {
+		// "Dropping" packets 2 and 4
+		if i == 2 || i == 4 {
+			lost = true
+			continue
+		}
+		if lost {
+			samples, err := dec.LastPacketDuration()
+			if err != nil {
+				t.Fatalf("Couldn't get last packet duration: %v", err)
+			}
+
+			pcmBuffer := make([]int16, samples)
+			if err = dec.DecodePLC(pcmBuffer); err != nil {
+				t.Fatalf("Couldn't decode data: %v", err)
+			}
+			nonZero := 0
+			for n := range pcmBuffer {
+				if pcmBuffer[n] != 0 {
+					nonZero++
+				}
+			}
+			if nonZero == 0 {
+				t.Fatalf("DecodePLC produced only zero samples")
+			}
+			pcm = append(pcm, pcmBuffer...)
+			lost = false
+		}
+
+		pcmBuffer := make([]int16, NUMBER_OF_FRAMES*FRAME_SIZE)
+		n, err := dec.Decode(encodedData[i], pcmBuffer)
+		if err != nil {
+			t.Fatalf("Couldn't decode data: %v", err)
+		}
+		pcmBuffer = pcmBuffer[:n]
+		if n != FRAME_SIZE {
+			t.Fatalf("Length mismatch: %d samples expected, %d out", FRAME_SIZE, n)
+		}
+		pcm = append(pcm, pcmBuffer...)
+	}
+
+	if len(mono) != len(pcm) {
+		t.Fatalf("Input/Output length mismatch: %d samples in, %d out", len(mono), len(pcm))
+	}
+
+	// Commented out for the same reason as in TestStereo
+	/*
+		fmt.Printf("in,out\n")
+		for i := range mono {
+			fmt.Printf("%d,%d\n", mono[i], pcm[i])
+		}
+	*/
+
+}
+
+func TestCodecPLCFloat32(t *testing.T) {
+	// Create bogus input sound
+	const G4 = 391.995
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 10
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	const NUMBER_OF_FRAMES = 6
+	pcm := make([]float32, 0)
+
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Fatalf("Error creating new encoder: %v", err)
+	}
+
+	dec, err := NewDecoder(SAMPLE_RATE, 1)
+	if err != nil || dec == nil {
+		t.Fatalf("Error creating new decoder: %v", err)
+	}
+
+	mono := make([]float32, FRAME_SIZE*NUMBER_OF_FRAMES)
+	addSineFloat32(mono, SAMPLE_RATE, G4)
+
+	encodedData := make([][]byte, NUMBER_OF_FRAMES)
+	for i, idx := 0, 0; i < len(mono); i += FRAME_SIZE {
+		data := make([]byte, 1000)
+		n, err := enc.EncodeFloat32(mono[i:i+FRAME_SIZE], data)
+		if err != nil {
+			t.Fatalf("Couldn't encode data: %v", err)
+		}
+		data = data[:n]
+		encodedData[idx] = data
+		idx++
+	}
+
+	lost := false
+	for i := 0; i < len(encodedData); i++ {
+		// "Dropping" packets 2 and 4
+		if i == 2 || i == 4 {
+			lost = true
+			continue
+		}
+		if lost {
+			samples, err := dec.LastPacketDuration()
+			if err != nil {
+				t.Fatalf("Couldn't get last packet duration: %v", err)
+			}
+
+			pcmBuffer := make([]float32, samples)
+			if err = dec.DecodePLCFloat32(pcmBuffer); err != nil {
+				t.Fatalf("Couldn't decode data: %v", err)
+			}
+			nonZero := 0
+			for n := range pcmBuffer {
+				if pcmBuffer[n] != 0.0 {
+					nonZero++
+				}
+			}
+			if nonZero == 0 {
+				t.Fatalf("DecodePLC produced only zero samples")
+			}
+			pcm = append(pcm, pcmBuffer...)
+			lost = false
+		}
+
+		pcmBuffer := make([]float32, NUMBER_OF_FRAMES*FRAME_SIZE)
+		n, err := dec.DecodeFloat32(encodedData[i], pcmBuffer)
+		if err != nil {
+			t.Fatalf("Couldn't decode data: %v", err)
+		}
+		pcmBuffer = pcmBuffer[:n]
+		if n != FRAME_SIZE {
+			t.Fatalf("Length mismatch: %d samples expected, %d out", FRAME_SIZE, n)
+		}
+		pcm = append(pcm, pcmBuffer...)
+	}
+
+	if len(mono) != len(pcm) {
+		t.Fatalf("Input/Output length mismatch: %d samples in, %d out", len(mono), len(pcm))
+	}
+
+	// Commented out for the same reason as in TestStereo
+	/*
+		fmt.Printf("in,out\n")
+		for i := 0; i < len(mono); i++ {
+			fmt.Printf("%f,%f\n", mono[i], pcm[i])
+		}
+	*/
+}
+
 func TestStereo(t *testing.T) {
 	// Create bogus input sound
 	const G4 = 391.995
