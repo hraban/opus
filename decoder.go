@@ -64,7 +64,7 @@ func (dec *Decoder) Init(sample_rate int, channels int) error {
 	return nil
 }
 
-// Decode encoded Opus data into the supplied buffer. On success, returns the
+// Decode decodes Opus data into the supplied buffer. On success, returns the
 // number of samples correctly written to the target buffer.
 func (dec *Decoder) Decode(data []byte, pcm []int16) (int, error) {
 	if dec.p == nil {
@@ -92,7 +92,7 @@ func (dec *Decoder) Decode(data []byte, pcm []int16) (int, error) {
 	return n, nil
 }
 
-// Decode encoded Opus data into the supplied buffer. On success, returns the
+// Decode decodes Opus data into the supplied buffer. On success, returns the
 // number of samples correctly written to the target buffer.
 func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 	if dec.p == nil {
@@ -120,7 +120,7 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 	return n, nil
 }
 
-// DecodeFEC encoded Opus data into the supplied buffer with forward error
+// DecodeFEC decodes Opus data into the supplied buffer with forward error
 // correction. It is to be used on the packet directly following the lost one.
 // The supplied buffer needs to be exactly the duration of audio that is missing
 func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
@@ -149,7 +149,7 @@ func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
 	return nil
 }
 
-// DecodeFECFloat32 encoded Opus data into the supplied buffer with forward error
+// DecodeFECFloat32 decodes Opus data into the supplied buffer with forward error
 // correction. It is to be used on the packet directly following the lost one.
 // The supplied buffer needs to be exactly the duration of audio that is missing
 func (dec *Decoder) DecodeFECFloat32(data []byte, pcm []float32) error {
