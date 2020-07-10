@@ -11,9 +11,7 @@
 // Defined in Go. Uses the same signature as Go, no need for proxy function.
 int go_readcallback(void *p, unsigned char *buf, int nbytes);
 
-// Allocated once, never moved. Pointer to this is safe for passing around
-// between Go and C.
-struct OpusFileCallbacks callbacks = {
+static struct OpusFileCallbacks callbacks = {
     .read = go_readcallback,
 };
 
@@ -23,7 +21,7 @@ struct OpusFileCallbacks callbacks = {
 // we have this wrapper function to shush it.
 // https://groups.google.com/g/golang-nuts/c/995uZyRPKlU
 OggOpusFile *
-my_open_callbacks(uintptr_t p, const OpusFileCallbacks *cb, int *error)
+my_open_callbacks(uintptr_t p, int *error)
 {
-    return op_open_callbacks((void *)p, cb, NULL, 0, error);
+    return op_open_callbacks((void *)p, &callbacks, NULL, 0, error);
 }

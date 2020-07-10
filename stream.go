@@ -16,8 +16,7 @@ import (
 #include <stdint.h>
 #include <string.h>
 
-extern struct OpusFileCallbacks callbacks;
-OggOpusFile *my_open_callbacks(uintptr_t p, const OpusFileCallbacks *cb, int *error);
+OggOpusFile *my_open_callbacks(uintptr_t p, int *error);
 
 */
 import "C"
@@ -105,7 +104,7 @@ func (s *Stream) Init(read io.Reader) error {
 	// called.
 	streams.Save(s)
 	defer streams.Del(s)
-	oggfile := C.my_open_callbacks(C.uintptr_t(s.id), &C.callbacks, &errno)
+	oggfile := C.my_open_callbacks(C.uintptr_t(s.id), &errno)
 	if errno != 0 {
 		return StreamError(errno)
 	}
