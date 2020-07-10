@@ -108,26 +108,10 @@ for i := 0; i < n; i++ {
 }
 ```
 
-Note regarding Forward Error Correction (FEC):
-> When a packet is considered "lost", `DecodeFEC` and `DecodeFECFloat32` methods
-> can be called on the next packet in order to try and recover some of the lost
-> data. The PCM needs to be exactly the duration of audio that is missing.
-> `LastPacketDuration()` can be used on the decoder to get the length of the
-> last packet.
-> Note also that in order to use this feature the encoder needs to be configured
-> with `SetInBandFEC(true)` and `SetPacketLossPerc(x)` options.
-
-Note regarding Packet Loss Concealment (PLC):
-> When a packet is considered "lost", `DecodePLC` and `DecodePLCFloat32` methods
-> can be called in order to obtain something better sounding than just silence.
-> The PCM needs to be exactly the duration of audio that is missing.
-> `LastPacketDuration()` can be used on the decoder to get the length of the
-> last packet.
-> This option does not require any additional encoder options. Unlike FEC,
-> PLC does not introduce additional latency. It is calculated from the previous
-> packet, not from the next one.
-> Note that `DecodeFEC` and `DecodeFECFloat32` automatically fall back to PLC
-> when no FEC data is available in the provided packet.
+To handle packet loss from an unreliable network, see the
+[DecodePLC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodePLC) and
+[DecodeFEC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodeFEC)
+options.
 
 ### Streams (and Files)
 
