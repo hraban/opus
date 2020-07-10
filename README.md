@@ -1,4 +1,4 @@
-[![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
+[![Test](https://github.com/hraban/opus/workflows/Test/badge.svg)](https://github.com/hraban/opus/actions?query=workflow%3ATest)
 
 ## Go wrapper for Opus
 
