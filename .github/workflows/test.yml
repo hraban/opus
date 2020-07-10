@@ -7,16 +7,21 @@ jobs:
         go-version:
           - 1.14.x
         platform:
+          # Would like to test mac & win but not sure how to install opus on
+          # those in GH actions, yet.
           - ubuntu-latest
-          - macos-latest
-          - windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
+    - name: Install system dependencies
+      run: sudo apt-get install pkg-config libopus-dev libopusfile-dev moreutils
     - name: Checkout code
       uses: actions/checkout@v2
+    # Could be a separate step but this is so quick--just put it here
+    - name: Lint
+      run: gofmt -d . | tee /dev/stderr | ifne false
     - name: Test
       run: go test -race -v ./...
