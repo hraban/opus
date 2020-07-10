@@ -13,9 +13,11 @@ import (
 /*
 #cgo pkg-config: opusfile
 #include <opusfile.h>
+#include <stdint.h>
 #include <string.h>
 
 extern struct OpusFileCallbacks callbacks;
+OggOpusFile *my_open_callbacks(uintptr_t p, const OpusFileCallbacks *cb, int *error);
 
 */
 import "C"
@@ -103,13 +105,7 @@ func (s *Stream) Init(read io.Reader) error {
 	// called.
 	streams.Save(s)
 	defer streams.Del(s)
-	oggfile := C.op_open_callbacks(
-		// "C code may not keep a copy of a Go pointer after the call returns."
-		unsafe.Pointer(s.id),
-		&C.callbacks,
-		nil,
-		0,
-		&errno)
+	oggfile := C.my_open_callbacks(C.uintptr_t(s.id), &C.callbacks, &errno)
 	if errno != 0 {
 		return StreamError(errno)
 	}
