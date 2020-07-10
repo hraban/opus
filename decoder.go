@@ -121,8 +121,20 @@ func (dec *Decoder) DecodeFloat32(data []byte, pcm []float32) (int, error) {
 }
 
 // DecodeFEC encoded Opus data into the supplied buffer with forward error
-// correction. It is to be used on the packet directly following the lost one.
-// The supplied buffer needs to be exactly the duration of audio that is missing
+// correction.
+//
+// It is to be used on the packet directly following the lost one.  The supplied
+// buffer needs to be exactly the duration of audio that is missing
+//
+// When a packet is considered "lost", DecodeFEC can be called on the next
+// packet in order to try and recover some of the lost data. The PCM needs to be
+// exactly the duration of audio that is missing.  `LastPacketDuration()` can be
+// used on the decoder to get the length of the last packet.  Note also that in
+// order to use this feature the encoder needs to be configured with
+// SetInBandFEC(true) and SetPacketLossPerc(x) options.
+//
+// Note that DecodeFEC automatically falls back to PLC when no FEC data is
+// available in the provided packet.
 func (dec *Decoder) DecodeFEC(data []byte, pcm []int16) error {
 	if dec.p == nil {
 		return errDecUninitialized
@@ -179,7 +191,17 @@ func (dec *Decoder) DecodeFECFloat32(data []byte, pcm []float32) error {
 }
 
 // DecodePLC recovers a lost packet using Opus Packet Loss Concealment feature.
+//
 // The supplied buffer needs to be exactly the duration of audio that is missing.
+// When a packet is considered "lost", `DecodePLC` and `DecodePLCFloat32` methods
+// can be called in order to obtain something better sounding than just silence.
+// The PCM needs to be exactly the duration of audio that is missing.
+// `LastPacketDuration()` can be used on the decoder to get the length of the
+// last packet.
+//
+// This option does not require any additional encoder options. Unlike FEC,
+// PLC does not introduce additional latency. It is calculated from the previous
+// packet, not from the next one.
 func (dec *Decoder) DecodePLC(pcm []int16) error {
 	if dec.p == nil {
 		return errDecUninitialized
