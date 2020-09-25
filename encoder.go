@@ -215,6 +215,45 @@ func (enc *Encoder) EncodeFloat32(pcm []float32, data []byte) (int, error) {
 	return n, nil
 }
 
+// EncodeBytes raw PCM data and store the result in the supplied buffer. On success,
+// returns the number of bytes used up by the encoded data.
+func (enc *Encoder) EncodeBytes(pcm []uint8, data []byte, isFloat bool) (int, error) {
+	if enc.p == nil {
+		return 0, errEncUninitialized
+	}
+	if len(pcm) == 0 {
+		return 0, fmt.Errorf("opus: no data supplied")
+	}
+	if len(data) == 0 {
+		return 0, fmt.Errorf("opus: no target buffer")
+	}
+	if len(pcm)%enc.channels != 0 {
+		return 0, fmt.Errorf("opus: input buffer length must be multiple of channels")
+	}
+	samples := len(pcm) / enc.channels
+	var n int
+
+	if isFloat {
+		n = int(C.opus_encode_float(
+			enc.p,
+			(*C.float)(unsafe.Pointer(&pcm[0])),
+			C.int(samples),
+			(*C.uchar)(&data[0]),
+			C.opus_int32(cap(data))))
+	} else {
+		n = int(C.opus_encode(
+			enc.p,
+			(*C.opus_int16)(unsafe.Pointer(&pcm[0])),
+			C.int(samples),
+			(*C.uchar)(&data[0]),
+			C.opus_int32(cap(data))))
+	}
+	if n < 0 {
+		return 0, Error(n)
+	}
+	return n, nil
+}
+
 // SetDTX configures the encoder's use of discontinuous transmission (DTX).
 func (enc *Encoder) SetDTX(dtx bool) error {
 	i := 0
