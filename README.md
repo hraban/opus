@@ -91,7 +91,7 @@ Now pass it the opus bytes, and a buffer to store the PCM sound in:
 ```go
 var frameSizeMs float32 = ...  // if you don't know, go with 60 ms.
 frameSize := channels * frameSizeMs * sampleRate / 1000
-pcm := make([]byte, int(frameSize))
+pcm := make([]int16, int(frameSize))
 n, err := dec.Decode(data, pcm)
 if err != nil {
     ...
@@ -131,7 +131,7 @@ if err != nil {
     ...
 }
 defer s.Close()
-buf := make([]byte, 16384)
+pcmbuf := make([]int16, 16384)
 for {
     n, err = s.Read(buf)
     if err == io.EOF {
@@ -139,7 +139,7 @@ for {
     } else if err != nil {
         ...
     }
-    pcm := buf[:n*channels]
+    pcm := pcmbuf[:n*channels]
 
     // send pcm to audio device here, or write to a .wav file
 
