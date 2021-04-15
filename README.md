@@ -133,7 +133,7 @@ if err != nil {
 defer s.Close()
 pcmbuf := make([]int16, 16384)
 for {
-    n, err = s.Read(buf)
+    n, err = s.Read(pcmbuf)
     if err == io.EOF {
         break
     } else if err != nil {
