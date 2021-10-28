@@ -148,6 +148,25 @@ for {
 
 See https://godoc.org/gopkg.in/hraban/opus.v2#Stream for further info.
 
+### "My .ogg/.opus file doesn't play!" or "How do I play Opus in VLC / mplayer / ...?"
+
+Note: this package only does _encoding_ of your audio, to _raw opus data_. You can't just dump those all in one big file and play it back. You need extra info. First of all, you need to know how big each individual block is. Remember: opus data is a stream of encoded separate blocks, not one big stream of bytes. Second, you need meta-data: how many channels? What's the sampling rate? Frame size? Etc.
+
+Look closely at the decoding sample code (not stream), above: we're passing all that meta-data in, hard-coded. If you just put all your encoded bytes in one big file and gave that to a media player, it wouldn't know what to do with it. It wouldn't even know that it's Opus data. It would just look like =/dev/random=.
+
+What you need is a [container format](https://en.wikipedia.org/wiki/Container_format_(computing)).
+
+Compare it to video:
+
+* Encodings: MPEG[1234], VP9, H26[45], AV1
+* Container formats: .mkv, .avi, .mov, .ogv
+
+For Opus audio, the most common container format is OGG, aka .ogg or .opus. You'll know OGG from OGG/Vorbis: that's [Vorbis](https://xiph.org/vorbis/) encoded audio in an OGG container. So for Opus, you'd call it OGG/Opus. But technically you could stick opus data in any container format that supports it, including e.g. Matroska (.mka for audio, you probably know it from .mkv for video).
+
+Note: libopus, the C library that this wraps, technically comes with libopusfile, which can help with the creation of OGG/Opus streams from raw audio data. I just never needed it myself, so I haven't added the necessary code for it. If you find yourself adding it: send me a PR and we'll get it merged.
+
+This libopus wrapper _does_ come with code for _decoding_ an OGG/Opus stream. Just not for writing one.
+
 ### API Docs
 
 Go wrapper API reference:
