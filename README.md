@@ -152,7 +152,7 @@ See https://godoc.org/gopkg.in/hraban/opus.v2#Stream for further info.
 
 Note: this package only does _encoding_ of your audio, to _raw opus data_. You can't just dump those all in one big file and play it back. You need extra info. First of all, you need to know how big each individual block is. Remember: opus data is a stream of encoded separate blocks, not one big stream of bytes. Second, you need meta-data: how many channels? What's the sampling rate? Frame size? Etc.
 
-Look closely at the decoding sample code (not stream), above: we're passing all that meta-data in, hard-coded. If you just put all your encoded bytes in one big file and gave that to a media player, it wouldn't know what to do with it. It wouldn't even know that it's Opus data. It would just look like =/dev/random=.
+Look closely at the decoding sample code (not stream), above: we're passing all that meta-data in, hard-coded. If you just put all your encoded bytes in one big file and gave that to a media player, it wouldn't know what to do with it. It wouldn't even know that it's Opus data. It would just look like `/dev/random`.
 
 What you need is a [container format](https://en.wikipedia.org/wiki/Container_format_(computing)).
 
