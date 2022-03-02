@@ -8,6 +8,23 @@ libopusfile.
 The C libraries and docs are hosted at https://opus-codec.org/. This package
 just handles the wrapping in Go, and is unaffiliated with xiph.org.
 
+Features:
+
+- ✅ encode and decode raw PCM data to raw Opus data
+- ✅ useful when you control the recording device, _and_ the playback
+- ✅ decode .opus and .ogg files into raw audio data ("PCM")
+- ✅ reuse the system libraries for opus decoding (libopus)
+- ✅ works easily on Linux, Mac and Docker; needs libs on Windows
+- ❌ does not _create_ .opus or .ogg files (but feel free to send a PR)
+- ❌ does not work with .wav files (you need a separate .wav library for that)
+- ❌ no self-contained binary (you need the xiph.org libopus lib, e.g. through a package manager)
+- ❌ no cross compiling (because it uses CGo)
+
+Good use cases:
+
+- 👍 you are writing a music player app in Go, and you want to play back .opus files
+- 👍 you record raw wav in a web app or mobile app, you encode it as Opus on the client, you send the opus to a remote webserver written in Go, and you want to decode it back to raw audio data on that server
+
 ## Details
 
 This wrapper provides a Go translation layer for three elements from the
