@@ -1,4 +1,4 @@
-[![Test](https://github.com/hraban/opus/workflows/Test/badge.svg)](https://github.com/hraban/opus/actions?query=workflow%3ATest)
+[![travis-ci status](https://api.travis-ci.org/travis-ci/travis-web.svg?branch=master "tarvis-ci build status")](https://travis-ci.org/hraban/opus)
 
 ## Go wrapper for Opus
 
@@ -8,23 +8,6 @@ libopusfile.
 The C libraries and docs are hosted at https://opus-codec.org/. This package
 just handles the wrapping in Go, and is unaffiliated with xiph.org.
 
-Features:
-
-- ✅ encode and decode raw PCM data to raw Opus data
-- ✅ useful when you control the recording device, _and_ the playback
-- ✅ decode .opus and .ogg files into raw audio data ("PCM")
-- ✅ reuse the system libraries for opus decoding (libopus)
-- ✅ works easily on Linux, Mac and Docker; needs libs on Windows
-- ❌ does not _create_ .opus or .ogg files (but feel free to send a PR)
-- ❌ does not work with .wav files (you need a separate .wav library for that)
-- ❌ no self-contained binary (you need the xiph.org libopus lib, e.g. through a package manager)
-- ❌ no cross compiling (because it uses CGo)
-
-Good use cases:
-
-- 👍 you are writing a music player app in Go, and you want to play back .opus files
-- 👍 you record raw wav in a web app or mobile app, you encode it as Opus on the client, you send the opus to a remote webserver written in Go, and you want to decode it back to raw audio data on that server
-
 ## Details
 
 This wrapper provides a Go translation layer for three elements from the
@@ -33,12 +16,6 @@ xiph.org opus libs:
 * encoders
 * decoders
 * files & streams
-
-### Import
-
-```go
-import "gopkg.in/hraban/opus.v2"
-```
 
 ### Encoding
 
@@ -108,7 +85,7 @@ Now pass it the opus bytes, and a buffer to store the PCM sound in:
 ```go
 var frameSizeMs float32 = ...  // if you don't know, go with 60 ms.
 frameSize := channels * frameSizeMs * sampleRate / 1000
-pcm := make([]int16, int(frameSize))
+pcm := make([]byte, int(frameSize))
 n, err := dec.Decode(data, pcm)
 if err != nil {
     ...
@@ -117,20 +94,15 @@ if err != nil {
 // To get all samples (interleaved if multiple channels):
 pcm = pcm[:n*channels] // only necessary if you didn't know the right frame size
 
-// or access sample per sample, directly:
+// or access directly:
 for i := 0; i < n; i++ {
     ch1 := pcm[i*channels+0]
-    // For stereo output: copy ch1 into ch2 in mono mode, or deinterleave stereo
-    ch2 := pcm[(i*channels)+(channels-1)]
+    // if stereo:
+    ch2 := pcm[i*channels+1]
 }
 ```
 
-To handle packet loss from an unreliable network, see the
-[DecodePLC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodePLC) and
-[DecodeFEC](https://godoc.org/gopkg.in/hraban/opus.v2#Decoder.DecodeFEC)
-options.
-
-### Streams (and Files)
+### Streams (and files)
 
 To decode a .opus file (or .ogg with Opus data), or to decode a "Opus stream"
 (which is a Ogg stream with Opus data), use the `Stream` interface. It wraps an
@@ -148,53 +120,34 @@ if err != nil {
     ...
 }
 defer s.Close()
-pcmbuf := make([]int16, 16384)
+buf := make([]byte, 16384)
 for {
-    n, err = s.Read(pcmbuf)
+    n, err = s.Read(buf)
     if err == io.EOF {
         break
     } else if err != nil {
         ...
     }
-    pcm := pcmbuf[:n*channels]
+    pcm := buf[:n*channels]
 
     // send pcm to audio device here, or write to a .wav file
 
 }
 ```
 
-See https://godoc.org/gopkg.in/hraban/opus.v2#Stream for further info.
-
-### "My .ogg/.opus file doesn't play!" or "How do I play Opus in VLC / mplayer / ...?"
-
-Note: this package only does _encoding_ of your audio, to _raw opus data_. You can't just dump those all in one big file and play it back. You need extra info. First of all, you need to know how big each individual block is. Remember: opus data is a stream of encoded separate blocks, not one big stream of bytes. Second, you need meta-data: how many channels? What's the sampling rate? Frame size? Etc.
-
-Look closely at the decoding sample code (not stream), above: we're passing all that meta-data in, hard-coded. If you just put all your encoded bytes in one big file and gave that to a media player, it wouldn't know what to do with it. It wouldn't even know that it's Opus data. It would just look like `/dev/random`.
-
-What you need is a [container format](https://en.wikipedia.org/wiki/Container_format_(computing)).
-
-Compare it to video:
-
-* Encodings: MPEG[1234], VP9, H26[45], AV1
-* Container formats: .mkv, .avi, .mov, .ogv
-
-For Opus audio, the most common container format is OGG, aka .ogg or .opus. You'll know OGG from OGG/Vorbis: that's [Vorbis](https://xiph.org/vorbis/) encoded audio in an OGG container. So for Opus, you'd call it OGG/Opus. But technically you could stick opus data in any container format that supports it, including e.g. Matroska (.mka for audio, you probably know it from .mkv for video).
-
-Note: libopus, the C library that this wraps, technically comes with libopusfile, which can help with the creation of OGG/Opus streams from raw audio data. I just never needed it myself, so I haven't added the necessary code for it. If you find yourself adding it: send me a PR and we'll get it merged.
-
-This libopus wrapper _does_ come with code for _decoding_ an OGG/Opus stream. Just not for writing one.
+See https://godoc.org/gopkg.in/hraban/opus.v1#Stream for further info.
 
 ### API Docs
 
 Go wrapper API reference:
-https://godoc.org/gopkg.in/hraban/opus.v2
+https://godoc.org/gopkg.in/hraban/opus.v1
 
 Full libopus C API reference:
 https://www.opus-codec.org/docs/opus_api-1.1.3/
 
 For more examples, see the `_test.go` files.
 
-## Build & Installation
+## Build & installation
 
 This package requires libopus and libopusfile development packages to be
 installed on your system. These are available on Debian based systems from
@@ -210,25 +163,6 @@ sudo apt-get install pkg-config libopus-dev libopusfile-dev
 Mac:
 ```sh
 brew install pkg-config opus opusfile
-```
-
-### Building Without `libopusfile`
-
-This package can be built without `libopusfile` by using the build tag `nolibopusfile`.
-This enables the compilation of statically-linked binaries with no external
-dependencies on operating systems without a static `libopusfile`, such as
-[Alpine Linux](https://pkgs.alpinelinux.org/contents?branch=edge&name=opusfile-dev&arch=x86_64&repo=main).
-
-**Note:** this will disable all file and `Stream` APIs.
-
-To enable this feature, add `-tags nolibopusfile` to your `go build` or `go test` commands:
-
-```sh
-# Build
-go build -tags nolibopusfile ...
-
-# Test
-go test -tags nolibopusfile ./...
 ```
 
 ### Using in Docker
