@@ -1,6 +1,8 @@
-// Copyright © 2015-2017 Go Opus Authors (see AUTHORS file)
+// Copyright © Go Opus Authors (see AUTHORS file)
 //
 // License for use of this code is detailed in the LICENSE file
+
+// +build !nolibopusfile
 
 package opus
 

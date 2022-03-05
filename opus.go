@@ -1,4 +1,4 @@
-// Copyright © 2015-2017 Go Opus Authors (see AUTHORS file)
+// Copyright © Go Opus Authors (see AUTHORS file)
 //
 // License for use of this code is detailed in the LICENSE file
 
@@ -7,36 +7,19 @@ package opus
 /*
 // Link opus using pkg-config.
 #cgo pkg-config: opus
-#include <opus/opus.h>
-
-// Access the preprocessor from CGO
-const int CONST_APPLICATION_VOIP = OPUS_APPLICATION_VOIP;
-const int CONST_APPLICATION_AUDIO = OPUS_APPLICATION_AUDIO;
-const int CONST_APPLICATION_RESTRICTED_LOWDELAY = OPUS_APPLICATION_RESTRICTED_LOWDELAY;
+#include <opus.h>
 */
 import "C"
 
 type Application int
 
-// These variables should be constants, but for interoperability with CGO
-// they're var. Don't change them, though!
-var (
+const (
 	// Optimize encoding for VoIP
-	AppVoIP = Application(C.CONST_APPLICATION_VOIP)
+	AppVoIP = Application(C.OPUS_APPLICATION_VOIP)
 	// Optimize encoding for non-voice signals like music
-	AppAudio = Application(C.CONST_APPLICATION_AUDIO)
+	AppAudio = Application(C.OPUS_APPLICATION_AUDIO)
 	// Optimize encoding for low latency applications
-	AppRestrictedLowdelay = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
-)
-
-// DEPRECATED -- Don't use these. Will be removed end of 2017.
-var (
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_VOIP = Application(C.CONST_APPLICATION_VOIP)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_AUDIO = Application(C.CONST_APPLICATION_AUDIO)
-	// DEPRECATED - DON'T USE - Use the camel cased version
-	APPLICATION_RESTRICTED_LOWDELAY = Application(C.CONST_APPLICATION_RESTRICTED_LOWDELAY)
+	AppRestrictedLowdelay = Application(C.OPUS_APPLICATION_RESTRICTED_LOWDELAY)
 )
 
 const (

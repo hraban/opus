@@ -1,6 +1,8 @@
-// Copyright © 2015-2017 Go Opus Authors (see AUTHORS file)
+// Copyright © Go Opus Authors (see AUTHORS file)
 //
 // License for use of this code is detailed in the LICENSE file
+
+// +build !nolibopusfile
 
 package opus
 
@@ -13,9 +15,10 @@ import (
 /*
 #cgo pkg-config: opusfile
 #include <opusfile.h>
+#include <stdint.h>
 #include <string.h>
 
-extern struct OpusFileCallbacks callbacks;
+OggOpusFile *my_open_callbacks(uintptr_t p, int *error);
 
 */
 import "C"
@@ -103,13 +106,7 @@ func (s *Stream) Init(read io.Reader) error {
 	// called.
 	streams.Save(s)
 	defer streams.Del(s)
-	oggfile := C.op_open_callbacks(
-		// "C code may not keep a copy of a Go pointer after the call returns."
-		unsafe.Pointer(s.id),
-		&C.callbacks,
-		nil,
-		0,
-		&errno)
+	oggfile := C.my_open_callbacks(C.uintptr_t(s.id), &errno)
 	if errno != 0 {
 		return StreamError(errno)
 	}
