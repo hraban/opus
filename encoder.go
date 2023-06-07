@@ -26,6 +26,12 @@ bridge_encoder_get_dtx(OpusEncoder *st, opus_int32 *dtx)
 }
 
 int
+bridge_encoder_get_in_dtx(OpusEncoder *st, opus_int32 *in_dtx)
+{
+	return opus_encoder_ctl(st, OPUS_GET_IN_DTX(in_dtx));
+}
+
+int
 bridge_encoder_get_sample_rate(OpusEncoder *st, opus_int32 *sample_rate)
 {
 	return opus_encoder_ctl(st, OPUS_GET_SAMPLE_RATE(sample_rate));
@@ -237,6 +243,17 @@ func (enc *Encoder) DTX() (bool, error) {
 		return false, Error(res)
 	}
 	return dtx != 0, nil
+}
+
+// InDTX returns whether the last encoded frame was either a comfort noise update
+// during DTX or not encoded because of DTX.
+func (enc *Encoder) InDTX() (bool, error) {
+	var inDTX C.opus_int32
+	res := C.bridge_encoder_get_in_dtx(enc.p, &inDTX)
+	if res != C.OPUS_OK {
+		return false, Error(res)
+	}
+	return inDTX != 0, nil
 }
 
 // SampleRate returns the encoder sample rate in Hz.

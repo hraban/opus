@@ -50,6 +50,50 @@ func TestEncoderDTX(t *testing.T) {
 	}
 }
 
+func TestEncoderInDTX(t *testing.T) {
+	// Create bogus input sound
+	const G4 = 391.995
+	const SAMPLE_RATE = 48000
+	const FRAME_SIZE_MS = 60
+	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
+	pcm := make([]int16, FRAME_SIZE)
+	silentPCM := make([]int16, FRAME_SIZE)
+	out := make([]byte, FRAME_SIZE*4)
+	addSine(pcm, SAMPLE_RATE, G4)
+
+	vals := []bool{true, false}
+	for _, dtx := range vals {
+		enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
+		if err != nil || enc == nil {
+			t.Fatalf("Error creating new encoder: %v", err)
+		}
+		enc.SetDTX(dtx)
+		if _, err = enc.Encode(pcm, out); err != nil {
+			t.Fatalf("Error encoding non-silent frame: %v", err)
+		}
+		gotDTX, err := enc.InDTX()
+		if err != nil {
+			t.Fatalf("Error getting in DTX (%t): %v", dtx, err)
+		}
+		if gotDTX {
+			t.Fatalf("Error get in dtx: expect in dtx=false, got=true")
+		}
+		// Encode a few frames to let DTX kick in
+		for i := 0; i < 5; i++ {
+			if _, err = enc.Encode(silentPCM, out); err != nil {
+				t.Fatalf("Error encoding silent frame: %v", err)
+			}
+		}
+		gotDTX, err = enc.InDTX()
+		if err != nil {
+			t.Fatalf("Error getting in DTX (%t): %v", dtx, err)
+		}
+		if gotDTX != dtx {
+			t.Errorf("Error set dtx: expect in dtx=%v, got in dtx=%v", dtx, gotDTX)
+		}
+	}
+}
+
 func TestEncoderSampleRate(t *testing.T) {
 	sample_rates := []int{8000, 12000, 16000, 24000, 48000}
 	for _, f := range sample_rates {
