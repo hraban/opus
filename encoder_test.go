@@ -379,3 +379,15 @@ func TestEncoder_SetGetInvalidPacketLossPerc(t *testing.T) {
 		}
 	}
 }
+
+func TestEncoder_Reset(t *testing.T) {
+	enc, err := NewEncoder(48000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	RunTestCodec(t, enc)
+	if err := enc.Reset(); err != nil {
+		t.Errorf("Error reset encoder: %v", err)
+	}
+	RunTestCodec(t, enc)
+}
