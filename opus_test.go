@@ -26,16 +26,21 @@ func TestOpusErrstr(t *testing.T) {
 }
 
 func TestCodec(t *testing.T) {
+	const SAMPLE_RATE = 48000
+	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Fatalf("Error creating new encoder: %v", err)
+	}
+	RunTestCodec(t, enc)
+}
+
+func RunTestCodec(t *testing.T, enc *Encoder) {
 	// Create bogus input sound
 	const G4 = 391.995
 	const SAMPLE_RATE = 48000
 	const FRAME_SIZE_MS = 60
 	const FRAME_SIZE = SAMPLE_RATE * FRAME_SIZE_MS / 1000
 	pcm := make([]int16, FRAME_SIZE)
-	enc, err := NewEncoder(SAMPLE_RATE, 1, AppVoIP)
-	if err != nil || enc == nil {
-		t.Fatalf("Error creating new encoder: %v", err)
-	}
 	addSine(pcm, SAMPLE_RATE, G4)
 	data := make([]byte, 1000)
 	n, err := enc.Encode(pcm, data)

@@ -98,6 +98,12 @@ bridge_encoder_get_packet_loss_perc(OpusEncoder *st, opus_int32 *loss_perc)
 	return opus_encoder_ctl(st, OPUS_GET_PACKET_LOSS_PERC(loss_perc));
 }
 
+int
+bridge_encoder_reset_state(OpusEncoder *st)
+{
+	return opus_encoder_ctl(st, OPUS_RESET_STATE);
+}
+
 */
 import "C"
 
@@ -384,4 +390,13 @@ func (enc *Encoder) PacketLossPerc() (int, error) {
 		return 0, Error(res)
 	}
 	return int(lossPerc), nil
+}
+
+// Reset resets the codec state to be equivalent to a freshly initialized state.
+func (enc *Encoder) Reset() error {
+	res := C.bridge_encoder_reset_state(enc.p)
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
 }
