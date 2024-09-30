@@ -5,6 +5,7 @@
 package opus
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -64,5 +65,32 @@ func TestDecoder_GetLastPacketDuration(t *testing.T) {
 	}
 	if samples != n {
 		t.Fatalf("Wrong duration length. Expected %d. Got %d", n, samples)
+	}
+}
+
+func TestDecoder_SetComplexity(t *testing.T) {
+	const SAMPLE_RATE = 48000
+
+	dec, err := NewDecoder(SAMPLE_RATE, 1)
+	if err != nil || dec == nil {
+		t.Fatalf("Error creating new decoder: %v", err)
+	}
+
+	t.Run("Complexity 0 to 10", func(t *testing.T) {
+		for i := 0; i <= 10; i++ {
+			err = dec.SetComplexity(i)
+			if err != nil {
+				t.Fatalf("Expected nil got %v", err)
+			}
+		}
+	})
+
+	for _, tt := range []int{-1, 11, 99} {
+		t.Run(fmt.Sprintf("Complexity %d", tt), func(t *testing.T) {
+			err = dec.SetComplexity(tt)
+			if err != ErrBadArg {
+				t.Fatalf("Expected %v got %v", ErrBadArg, err)
+			}
+		})
 	}
 }

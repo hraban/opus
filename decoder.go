@@ -18,6 +18,12 @@ bridge_decoder_get_last_packet_duration(OpusDecoder *st, opus_int32 *samples)
 {
 	return opus_decoder_ctl(st, OPUS_GET_LAST_PACKET_DURATION(samples));
 }
+
+int
+bridge_decoder_set_complexity(OpusDecoder *st, opus_int32 complexity)
+{
+	return opus_decoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
+}
 */
 import "C"
 
@@ -259,4 +265,15 @@ func (dec *Decoder) LastPacketDuration() (int, error) {
 		return 0, Error(res)
 	}
 	return int(samples), nil
+}
+
+// SetComplexity sets the decoders's computational complexity
+// Note that this feature is only available if using libopus >= 1.5
+// This function will return ErrUnimplemented if the feature is not available
+func (enc *Decoder) SetComplexity(complexity int) error {
+	res := C.bridge_decoder_set_complexity(enc.p, C.opus_int32(complexity))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
 }
