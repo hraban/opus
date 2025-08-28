@@ -4,7 +4,9 @@
 
 package opus
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestEncoderNew(t *testing.T) {
 	enc, err := NewEncoder(48000, 1, AppVoIP)
@@ -390,4 +392,24 @@ func TestEncoder_Reset(t *testing.T) {
 		t.Errorf("Error reset encoder: %v", err)
 	}
 	RunTestCodec(t, enc)
+}
+
+func TestEncoder_SetGetVBR(t *testing.T) {
+	enc, err := NewEncoder(48000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	if vbr, err := enc.GetVBR(); err != nil {
+		t.Errorf("Error getting VBR: %v", err)
+	} else if !vbr {
+		t.Error("VBR should be enabled by default")
+	}
+	if err := enc.SetVBR(false); err != nil {
+		t.Errorf("Error setting VBR: %v", err)
+	}
+	if vbr, err := enc.GetVBR(); err != nil {
+		t.Errorf("Error getting VBR: %v", err)
+	} else if vbr {
+		t.Error("VBR should be disabled")
+	}
 }
