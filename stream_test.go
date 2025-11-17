@@ -2,7 +2,7 @@
 //
 // License for use of this code is detailed in the LICENSE file
 
-// +build !nolibopusfile
+//go:build !nolibopusfile
 
 package opus
 
