@@ -11,7 +11,7 @@ import (
 
 func TestVersion(t *testing.T) {
 	if ver := Version(); !strings.HasPrefix(ver, "libopus") {
-		t.Errorf("Unexpected linked libopus version: " + ver)
+		t.Errorf("Unexpected linked libopus version: %s", ver)
 	}
 }
 
