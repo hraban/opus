@@ -11,7 +11,7 @@ import (
 
 func TestVersion(t *testing.T) {
 	if ver := Version(); !strings.HasPrefix(ver, "libopus") {
-		t.Errorf("Unexpected linked libopus version: " + ver)
+		t.Errorf("Unexpected linked libopus version: %s", ver)
 	}
 }
 
@@ -81,12 +81,11 @@ func TestCodecFloat32(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Couldn't encode data: %v", err)
 	}
+	data = data[:n]
 	dec, err := NewDecoder(SAMPLE_RATE, 1)
 	if err != nil || dec == nil {
 		t.Fatalf("Error creating new decoder: %v", err)
 	}
-	// TODO: Uh-oh.. it looks like I forgot to put a data = data[:n] here, yet
-	// the test is not failing. Why?
 	n, err = dec.DecodeFloat32(data, pcm)
 	if err != nil {
 		t.Fatalf("Couldn't decode data: %v", err)

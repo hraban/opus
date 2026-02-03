@@ -1,0 +1,16 @@
+# Dockerfile for testing only.
+#
+# There is no point to publishing an actual docker image, since this is a
+# library.
+
+FROM debian:latest
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update && \
+    apt-get install -y libopus-dev pkg-config golang libopusfile-dev moreutils
+
+WORKDIR /app
+COPY ./. ./
+RUN go test -race ./...
+RUN go test -tags nolibopusfile -race ./...
+RUN gofmt -d . | tee /dev/stderr | ifne false
