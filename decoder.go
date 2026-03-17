@@ -19,10 +19,15 @@ bridge_decoder_get_last_packet_duration(OpusDecoder *st, opus_int32 *samples)
 	return opus_decoder_ctl(st, OPUS_GET_LAST_PACKET_DURATION(samples));
 }
 
+#define BRIDGE_ERR_NOT_SUPPORTED -12345
+
 int
-bridge_decoder_set_complexity(OpusDecoder *st, opus_int32 complexity)
+bridge_decoder_set_complexity(OpusDecoder *st, int complexity)
 {
+#if defined(OPUS_SET_COMPLEXITY)
 	return opus_decoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
+#endif
+	return BRIDGE_ERR_NOT_SUPPORTED;
 }
 */
 import "C"
@@ -267,12 +272,16 @@ func (dec *Decoder) LastPacketDuration() (int, error) {
 	return int(samples), nil
 }
 
+const bridgeErrUnimplemented = C.BRIDGE_ERR_NOT_SUPPORTED
+
 // SetComplexity sets the decoders's computational complexity
 // Note that this feature is only available if using libopus >= 1.5
-// This function will return ErrUnimplemented if the feature is not available
-func (enc *Decoder) SetComplexity(complexity int) error {
-	res := C.bridge_decoder_set_complexity(enc.p, C.opus_int32(complexity))
-	if res != C.OPUS_OK {
+func (dec *Decoder) SetComplexity(complexity int) error {
+	res := int(C.bridge_decoder_set_complexity(dec.p, C.int(complexity)))
+	if res == bridgeErrUnimplemented {
+		return fmt.Errorf("SetComplexity for decoders requires libopus 1.5 or higher")
+	}
+	if res != int(C.OPUS_OK) {
 		return Error(res)
 	}
 	return nil
