@@ -22,7 +22,7 @@ bridge_decoder_get_last_packet_duration(OpusDecoder *st, opus_int32 *samples)
 #define BRIDGE_ERR_NOT_SUPPORTED -12345
 
 int
-bridge_decoder_set_complexity(OpusDecoder *st, int complexity)
+bridge_decoder_set_complexity(OpusDecoder *st, opus_int32 complexity)
 {
 #if defined(OPUS_SET_COMPLEXITY)
 	return opus_decoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
