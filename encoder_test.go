@@ -391,3 +391,24 @@ func TestEncoder_Reset(t *testing.T) {
 	}
 	RunTestCodec(t, enc)
 }
+
+func TestEncoderVBR(t *testing.T) {
+	enc, err := NewEncoder(8000, 1, AppVoIP)
+	if err != nil || enc == nil {
+		t.Errorf("Error creating new encoder: %v", err)
+	}
+	vals := []bool{true, false}
+	for _, dtx := range vals {
+		err := enc.SetVBR(dtx)
+		if err != nil {
+			t.Fatalf("Error setting VBR to %t: %v", dtx, err)
+		}
+		gotv, err := enc.VBR()
+		if err != nil {
+			t.Fatalf("Error getting VBR (%t): %v", dtx, err)
+		}
+		if gotv != dtx {
+			t.Errorf("Error set vbr: expect vbr=%v, got vbr=%v", dtx, gotv)
+		}
+	}
+}

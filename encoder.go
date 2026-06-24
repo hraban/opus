@@ -104,6 +104,18 @@ bridge_encoder_reset_state(OpusEncoder *st)
 	return opus_encoder_ctl(st, OPUS_RESET_STATE);
 }
 
+int
+bridge_encoder_set_vbr(OpusEncoder *st, opus_int32 vbr)
+{
+	return opus_encoder_ctl(st, OPUS_SET_VBR(vbr));
+}
+
+int
+bridge_encoder_get_vbr(OpusEncoder *st, opus_int32 *vbr)
+{
+	return opus_encoder_ctl(st, OPUS_GET_VBR(vbr));
+}
+
 */
 import "C"
 
@@ -399,4 +411,27 @@ func (enc *Encoder) Reset() error {
 		return Error(res)
 	}
 	return nil
+}
+
+// SetVBR configures the encoder's use of variable bitrate (VBR).
+func (enc *Encoder) SetVBR(vbr bool) error {
+	i := 0
+	if vbr {
+		i = 1
+	}
+	res := C.bridge_encoder_set_vbr(enc.p, C.opus_int32(i))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// VBR reports whether this encoder is configured to use variable bitrate (VBR).
+func (enc *Encoder) VBR() (bool, error) {
+	var vbr C.opus_int32
+	res := C.bridge_encoder_get_vbr(enc.p, &vbr)
+	if res != C.OPUS_OK {
+		return false, Error(res)
+	}
+	return vbr != 0, nil
 }
