@@ -198,8 +198,10 @@ func TestEncoder_SetBitrateToMax(t *testing.T) {
 		t.Error("Error getting bitrate", err)
 	}
 
-	brMax := 4083200
-	if br != brMax { //default start value
+	// https://opus-codec.org/docs/opus_api-1.5/group__opus__encoderctls.html#ga0bb51947e355b33d0cb358463b5101a7
+	// maximum "sensible" bitrate according to docs.
+	brMax := 512000
+	if br < brMax {
 		t.Errorf("Unexpected bitrate. Got %d, but expected %d", br, brMax)
 	}
 }
