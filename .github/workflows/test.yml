@@ -65,6 +65,7 @@ jobs:
         nix_path: nixpkgs=channel:nixpkgs-unstable
     - uses: actions/checkout@v6
     - run: nix-build
+    - run: nix flake check -L
 
   nocommit:
     runs-on: ubuntu-latest
