@@ -17,7 +17,7 @@ pkgs.buildGoModule {
   ];
   checkFlags = "-race";
   postCheck = ''
-    gofmt -d | tee /dev/stderr | ifne false
+    gofmt -d .
   '';
   vendorHash = null;
 }

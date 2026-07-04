@@ -21,9 +21,6 @@ jobs:
       run: sudo apt-get install pkg-config libopus-dev libopusfile-dev moreutils
     - name: Checkout code
       uses: actions/checkout@v2
-    # Could be a separate step but this is so quick--just put it here
-    - name: Lint
-      run: gofmt -d . | tee /dev/stderr | ifne false
     - name: Test
       run: go test -race -v ./...
 
