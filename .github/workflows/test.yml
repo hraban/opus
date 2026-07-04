@@ -6,11 +6,12 @@ jobs:
       matrix:
         go-version:
           - 1.24.x
-          - 1.11.x
+          - 1.26.x
         platform:
           # Would like to test mac & win but not sure how to install opus on
           # those in GH actions, yet.
           - ubuntu-latest
+          - ubuntu-26.04-arm
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
