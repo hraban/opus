@@ -55,6 +55,7 @@ jobs:
         config:
           - os: ubuntu-latest
           - os: macos-latest
+          - os: ubuntu-26.04-arm
     steps:
     - uses: cachix/install-nix-action@v31
       with:
