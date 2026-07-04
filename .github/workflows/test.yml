@@ -21,7 +21,7 @@ jobs:
     - name: Install system dependencies
       run: sudo apt-get install pkg-config libopus-dev libopusfile-dev moreutils
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6
     - name: Test
       run: go test -race -v ./...
 
@@ -35,14 +35,14 @@ jobs:
     - name: Install system dependencies
       run: sudo apt-get install pkg-config libopus-dev
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v6
     - name: Test
       run: go test -tags nolibopusfile -race -v ./...
 
   docker:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - run: docker build --progress=plain -t latest -f Dockerfile.test .
 
   nix:
@@ -58,12 +58,12 @@ jobs:
     - uses: cachix/install-nix-action@v31
       with:
         nix_path: nixpkgs=channel:nixpkgs-unstable
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - run: nix-build
 
   nocommit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: "nocommit checker"
         uses: nobssoftware/nocommit@v3
