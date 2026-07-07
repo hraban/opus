@@ -40,10 +40,15 @@ jobs:
       run: go test -tags nolibopusfile -race -v ./...
 
   docker:
+    strategy:
+      matrix:
+        dist:
+          - debian
+          - alpine
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - run: docker build --progress=plain -t latest -f Dockerfile.test .
+    - run: docker build --progress=plain -t latest -f Dockerfile.${{ matrix.dist }} .
 
   nix:
     runs-on: ${{ matrix.config.os }}

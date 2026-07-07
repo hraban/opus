@@ -1,0 +1,10 @@
+FROM golang:alpine
+
+WORKDIR /app
+
+RUN apk --no-cache add build-base opus-dev opusfile-dev
+
+ADD . /app
+
+RUN go test -race ./...
+RUN go test -tags nolibopusfile -race ./...
