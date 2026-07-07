@@ -4,6 +4,8 @@
   inputs.nixpkgs-2511.url = "github:nixos/nixpkgs/nixos-25.11";
   # libopus 1.4
   inputs.nixpkgs-2311.url = "github:nixos/nixpkgs/nixos-23.11";
+  # libopus 1.3
+  inputs.nixpkgs-2305.url = "github:nixos/nixpkgs/nixos-23.05";
   inputs.flake-parts.url = "github:hercules-ci/flake-parts";
   inputs.systems.url = "github:nix-systems/default";
 
@@ -38,6 +40,7 @@
           }
           // lib.optionalAttrs (!pkgs.stdenv.hostPlatform.isDarwin) {
             libopus14 = inputs'.nixpkgs-2311.legacyPackages.callPackage ./package.nix { };
+            libopus131 = inputs'.nixpkgs-2305.legacyPackages.callPackage ./package.nix { };
           };
         };
     };
