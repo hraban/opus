@@ -8,22 +8,32 @@ libopusfile.
 The C libraries and docs are hosted at https://opus-codec.org/. This package
 just handles the wrapping in Go, and is unaffiliated with xiph.org.
 
-Features:
+**Features**
 
-- ✅ encode and decode raw PCM data to raw Opus data
+- ✅ encode raw PCM data to raw Opus data
+- ✅ decode raw PCM data from raw Opus data
 - ✅ useful when you control the recording device, _and_ the playback
-- ✅ decode .opus and .ogg files into raw audio data ("PCM")
+- ✅ _decode_ .opus and .ogg files into raw audio data ("PCM")
 - ✅ reuse the system libraries for opus decoding (libopus)
 - ✅ works easily on Linux, Mac and Docker; needs libs on Windows
-- ❌ does not _create_ .opus or .ogg files (but feel free to send a PR)
-- ❌ does not work with .wav files (you need a separate .wav library for that)
-- ❌ no self-contained binary (you need the xiph.org libopus lib, e.g. through a package manager)
-- ❌ no cross compiling (because it uses CGo)
 
-Good use cases:
+**Non features**, which _should_ be features, but I’m personally not opting in to maintaining:
+
+- ❌ _creating_ .opus or .ogg files
+- ❌ [Multistream API](https://opus-codec.org/docs/opus_api-1.1.2/group__opus__multistream.html)[^1]
+
+[^1]: See [musesession’s fork](https://github.com/musesessions/opus), unaffiliated an untested
+
+**Use it for**:
 
 - 👍 you are writing a music player app in Go, and you want to play back .opus files
 - 👍 you record raw wav in a web app or mobile app, you encode it as Opus on the client, you send the opus to a remote webserver written in Go, and you want to decode it back to raw audio data on that server
+
+**Do not use it for**:
+
+- 👎 Playing or creating .wav files (you need a separate .wav library for that)
+- 👎 Cross compiling (because it uses CGo)
+- 👎 Self-contained binary (you need libopus, e.g. through a package manager)
 
 ## Details
 
@@ -180,7 +190,7 @@ Compare it to video:
 
 For Opus audio, the most common container format is OGG, aka .ogg or .opus. You'll know OGG from OGG/Vorbis: that's [Vorbis](https://xiph.org/vorbis/) encoded audio in an OGG container. So for Opus, you'd call it OGG/Opus. But technically you could stick opus data in any container format that supports it, including e.g. Matroska (.mka for audio, you probably know it from .mkv for video).
 
-Note: libopus, the C library that this wraps, technically comes with libopusfile, which can help with the creation of OGG/Opus streams from raw audio data. I just never needed it myself, so I haven't added the necessary code for it. If you find yourself adding it: send me a PR and we'll get it merged.
+Note: libopus, the C library that this wraps, technically comes with libopusfile, which can help with the creation of OGG/Opus streams from raw audio data. I just never needed it myself, so I haven't added the necessary code for it.
 
 This libopus wrapper _does_ come with code for _decoding_ an OGG/Opus stream. Just not for writing one.
 
