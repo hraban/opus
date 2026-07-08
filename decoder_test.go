@@ -5,6 +5,7 @@
 package opus
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -28,6 +29,40 @@ func TestDecoderUnitialized(t *testing.T) {
 	_, err = dec.DecodeFloat32(nil, nil)
 	if err != errDecUninitialized {
 		t.Errorf("Expected \"unitialized decoder\" error: %v", err)
+	}
+}
+
+func versionAtLeast(t *testing.T, wantmaj, wantmin int) bool {
+	var major, minor int
+	_, err := fmt.Sscanf(Version(), "libopus %d.%d", &major, &minor)
+	if err != nil {
+		t.Fatalf("Parsing version %#v: %v", Version(), err)
+	}
+	return major > wantmaj || (major == wantmaj && minor >= wantmin)
+}
+
+func TestDecoder_SetGetComplexity(t *testing.T) {
+	dec, err := NewDecoder(48000, 1)
+	if !versionAtLeast(t, 1, 5) {
+		t.Skipf("Decoder complexity only introduced in v1.5")
+	}
+	if err != nil || dec == nil {
+		t.Errorf("Error creating new decoder: %v", err)
+	}
+	vals := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	for _, complexity := range vals {
+		err := dec.SetComplexity(complexity)
+		if err != nil {
+			t.Error("Error setting complexity value:", err)
+		}
+		cpx, err := dec.Complexity()
+		if err != nil {
+			t.Error("Error getting complexity value", err)
+		}
+		if cpx != complexity {
+			t.Errorf("Unexpected decoder complexity value. Got %d, but expected %d",
+				cpx, complexity)
+		}
 	}
 }
 

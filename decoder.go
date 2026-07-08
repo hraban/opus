@@ -14,6 +14,18 @@ import (
 #include <opus.h>
 
 int
+bridge_decoder_set_complexity(OpusDecoder *st, opus_int32 complexity)
+{
+	return opus_decoder_ctl(st, OPUS_SET_COMPLEXITY(complexity));
+}
+
+int
+bridge_decoder_get_complexity(OpusDecoder *st, opus_int32 *complexity)
+{
+	return opus_decoder_ctl(st, OPUS_GET_COMPLEXITY(complexity));
+}
+
+int
 bridge_decoder_get_last_packet_duration(OpusDecoder *st, opus_int32 *samples)
 {
 	return opus_decoder_ctl(st, OPUS_GET_LAST_PACKET_DURATION(samples));
@@ -62,6 +74,25 @@ func (dec *Decoder) Init(sample_rate int, channels int) error {
 		return Error(errno)
 	}
 	return nil
+}
+
+// SetComplexity sets the decoder's computational complexity
+func (dec *Decoder) SetComplexity(complexity int) error {
+	res := C.bridge_decoder_set_complexity(dec.p, C.opus_int32(complexity))
+	if res != C.OPUS_OK {
+		return Error(res)
+	}
+	return nil
+}
+
+// Complexity returns the computational complexity used by the decoder
+func (dec *Decoder) Complexity() (int, error) {
+	var complexity C.opus_int32
+	res := C.bridge_decoder_get_complexity(dec.p, &complexity)
+	if res != C.OPUS_OK {
+		return 0, Error(res)
+	}
+	return int(complexity), nil
 }
 
 // Decode encoded Opus data into the supplied buffer. On success, returns the
