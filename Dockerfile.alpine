@@ -1,3 +1,8 @@
+# Dockerfile for testing only.
+#
+# There is no point to publishing an actual docker image, since this is a
+# library.
+
 FROM golang:alpine
 
 WORKDIR /app
