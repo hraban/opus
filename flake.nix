@@ -1,13 +1,16 @@
 {
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-  # For libopus 1.5.2
-  inputs.nixpkgs-2511.url = "github:nixos/nixpkgs/nixos-25.11";
-  # libopus 1.4
-  inputs.nixpkgs-2311.url = "github:nixos/nixpkgs/nixos-23.11";
-  # libopus 1.3
-  inputs.nixpkgs-2305.url = "github:nixos/nixpkgs/nixos-23.05";
-  inputs.flake-parts.url = "github:hercules-ci/flake-parts";
-  inputs.systems.url = "github:nix-systems/default";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    # For libopus 1.5.2
+    nixpkgs-2511.url = "github:nixos/nixpkgs/nixos-25.11";
+    # libopus 1.4
+    nixpkgs-2311.url = "github:nixos/nixpkgs/nixos-23.11";
+    # libopus 1.3
+    nixpkgs-2305.url = "github:nixos/nixpkgs/nixos-23.05";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
+    treefmt.url = "github:numtide/treefmt-nix";
+  };
 
   outputs =
     {
@@ -18,6 +21,7 @@
     }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import systems;
+      imports = [ inputs.treefmt.flakeModule ];
       perSystem =
         {
           self',
@@ -43,6 +47,11 @@
             # Broken hydra build for one of the Darwin dependencies in this
             # branch
             libopus14 = inputs'.nixpkgs-2311.legacyPackages.callPackage ./package.nix { };
+          };
+
+          treefmt.programs.nixfmt = {
+            enable = true;
+            strict = true;
           };
         };
     };
