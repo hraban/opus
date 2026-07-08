@@ -9,7 +9,8 @@
 }:
 
 buildGoModule {
-  name = "go-opus";
+  pname = "go-opus";
+  version = "2" + lib.optionalString (libopus ? version) "-${libopus.version}";
   src = ./.;
   buildInputs = [
     libogg
