@@ -400,17 +400,17 @@ func TestEncoderVBR(t *testing.T) {
 		t.Errorf("Error creating new encoder: %v", err)
 	}
 	vals := []bool{true, false}
-	for _, dtx := range vals {
-		err := enc.SetVBR(dtx)
+	for _, vbr := range vals {
+		err := enc.SetVBR(vbr)
 		if err != nil {
-			t.Fatalf("Error setting VBR to %t: %v", dtx, err)
+			t.Fatalf("Error setting VBR to %t: %v", vbr, err)
 		}
 		gotv, err := enc.VBR()
 		if err != nil {
-			t.Fatalf("Error getting VBR (%t): %v", dtx, err)
+			t.Fatalf("Error getting VBR (%t): %v", vbr, err)
 		}
-		if gotv != dtx {
-			t.Errorf("Error set vbr: expect vbr=%v, got vbr=%v", dtx, gotv)
+		if gotv != vbr {
+			t.Errorf("Error set vbr: expect vbr=%v, got vbr=%v", vbr, gotv)
 		}
 	}
 }
