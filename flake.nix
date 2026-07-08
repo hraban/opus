@@ -37,10 +37,12 @@
             # that this older nixpkgs’ go build tooling doesn’t support this package
             # anymore.  It’s a trade-off.
             libopus152 = inputs'.nixpkgs-2511.legacyPackages.callPackage ./package.nix { };
+            libopus131 = inputs'.nixpkgs-2305.legacyPackages.callPackage ./package.nix { };
           }
           // lib.optionalAttrs (!pkgs.stdenv.hostPlatform.isDarwin) {
+            # Broken hydra build for one of the Darwin dependencies in this
+            # branch
             libopus14 = inputs'.nixpkgs-2311.legacyPackages.callPackage ./package.nix { };
-            libopus131 = inputs'.nixpkgs-2305.legacyPackages.callPackage ./package.nix { };
           };
         };
     };
